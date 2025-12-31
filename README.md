@@ -1,0 +1,1 @@
+# This is djnago app build using django and tailwindcss
