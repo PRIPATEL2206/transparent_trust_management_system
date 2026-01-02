@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-teal-50 font-sans">
+
+    <!-- Header / Navbar -->
+    <header class="bg-teal-800 shadow-md">
+        <div class="container mx-auto flex items-center justify-between px-4 py-4">
+            <!-- Logo -->
+            <div class="text-2xl font-bold text-white">
+                TMS
+            </div>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex space-x-6 items-center">
+                <a href="/about/" class="text-white hover:text-teal-200 transition">About Trust</a>
+                <a href="/contact/" class="text-white hover:text-teal-200 transition">Contact</a>
+                <a href="/membership/" class="text-white hover:text-teal-200 transition">Membership Plans</a>
+                <a href="/membership/join/" class="text-white hover:text-teal-200 transition">Join Trust</a>
+                <a href="/donations/public/" class="text-white hover:text-teal-200 transition">Public Donations</a>
+                
+                <!-- Dropdown for extra menu items -->
+                <div class="relative group">
+                    <button class="flex items-center text-white hover:text-teal-200 transition">
+                        More
+                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-white shadow-md mt-2 rounded-md py-2 w-40">
+                        <a href="#" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Extra Link 1</a>
+                        <a href="#" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Extra Link 2</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Login Button -->
+            <div class="hidden md:block">
+                <a href="/accounts/login/" class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition">
+                    Login
+                </a>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <div class="md:hidden">
+                <button id="mobile-menu-btn" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-teal-700">
+            <a href="/about/" class="block px-4 py-2 text-white hover:bg-teal-800">About Trust</a>
+            <a href="/contact/" class="block px-4 py-2 text-white hover:bg-teal-800">Contact</a>
+            <a href="/membership/" class="block px-4 py-2 text-white hover:bg-teal-800">Membership Plans</a>
+            <a href="/membership/join/" class="block px-4 py-2 text-white hover:bg-teal-800">Join Trust</a>
+            <a href="/donations/public/" class="block px-4 py-2 text-white hover:bg-teal-800">Public Donations</a>
+            <a href="/accounts/login/" class="block px-4 py-2 text-white hover:bg-teal-800">Login</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-teal-500 py-20">
+        <div class="container mx-auto text-center px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                Welcome to the Trust Management System
+            </h1>
+            <p class="text-white text-lg md:text-xl mb-6">
+                Transparent, secure, and easy management of trust operations.
+            </p>
+            <a href="/membership/join/" class="inline-block bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition">
+                Join Trust Today
+            </a>
+        </div>
+    </section>
+
+    <!-- About Trust Preview -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-semibold mb-6 text-teal-700">About the Trust</h2>
+            <p class="text-gray-700 max-w-2xl mx-auto">
+                Our trust is committed to transparency, accountability, and serving the community efficiently. Explore our membership plans, public donation receipts, and get involved today.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-teal-800 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            &copy; 2026 Trust Management System. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+</body>
+</html>
