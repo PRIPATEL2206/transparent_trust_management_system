@@ -81,18 +81,20 @@ The Trust Management System (TMS) is a web-based application designed to manage 
    python .\manage.py makemigrations
    ```
     Django analyzes model definitions and prepares database schema changes.
+  
+  4. **Apply Database Migrations**
+     Apply the generated migrations to the database:
 
-   4 **Apply Database Migrations**
-   Apply the generated migrations to the database:
-
-   ```bash
-   python .\manage.py migrate
-   ```
-    This step creates and updates database tables required by the application.
+     ```bash
+     python .\manage.py migrate
+      ```
+     
+      This step creates and updates database tables required by the application.
 
   
-    **Setup Complete**
-      At this stage, the application is successfully configured on your local system.
+
+   **Setup Complete**  
+    At this stage, the application is successfully configured on your local system.
 
 
    ##  How to Run the Application
@@ -110,9 +112,12 @@ The Trust Management System (TMS) is a web-based application designed to manage 
    ```bash
    python .\manage.py runserver
    ```
+   
+   
+   3 **Start Tailwind CSS:**  
+    **open another terminal**  
+    Navigate to the Tailwind CSS configuration directory and start Tailwind:
 
-   3  **Start Tailwind CSS:**
-   Navigate to the Tailwind CSS configuration directory and start Tailwind:
 
    ```bash
    cd .\tailwind_css_conf\
