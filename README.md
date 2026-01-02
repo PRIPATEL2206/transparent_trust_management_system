@@ -64,3 +64,36 @@ The Trust Management System (TMS) is a web-based application designed to manage 
 
    ```bash
    git clone https://github.com/PRIPATEL2206/transparent_trust_management_system.git
+
+2. **Install Project Dependencies:**
+   Install all required Python packages listed in the requirements file:
+
+      ```bash
+      pip install -r .\requrement.txt
+      ```
+
+   This command ensures all external libraries required by the project are installed.
+
+3. **Create Database Migration Files:**
+   Generate migration files based on the current Django models:
+
+   ```bash
+   python .\manage.py makemigrations
+   ```
+    Django analyzes model definitions and prepares database schema changes.
+
+   4 **Apply Database Migrations**
+   Apply the generated migrations to the database:
+
+   ```bash
+   python .\manage.py migrate
+   ```
+    This step creates and updates database tables required by the application.
+
+   **Setup Complete**
+   At this stage, the application is successfully configured on your local system.
+
+   You can now proceed with:
+   - Creating a superuser
+   - Running the Django development server
+   - Developing or testing application features
