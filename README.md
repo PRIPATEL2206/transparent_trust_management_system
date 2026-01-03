@@ -64,3 +64,66 @@ The Trust Management System (TMS) is a web-based application designed to manage 
 
    ```bash
    git clone https://github.com/PRIPATEL2206/transparent_trust_management_system.git
+
+2. **Install Project Dependencies:**
+   Install all required Python packages listed in the requirements file:
+
+      ```bash
+      pip install -r .\requirements.txt
+      ```
+
+   This command ensures all external libraries required by the project are installed.
+
+3. **Create Database Migration Files:**
+   Generate migration files based on the current Django models:
+
+   ```bash
+   python .\manage.py makemigrations
+   ```
+    Django analyzes model definitions and prepares database schema changes.
+  
+  4. **Apply Database Migrations**
+     Apply the generated migrations to the database:
+
+     ```bash
+     python .\manage.py migrate
+      ```
+     
+      This step creates and updates database tables required by the application.
+
+  
+
+   **Setup Complete**  
+    At this stage, the application is successfully configured on your local system.
+
+
+   ##  How to Run the Application
+
+   1 **Create a Superuser:**
+   Create an admin user for accessing the Django admin panel:
+
+   ```bash
+   python .\manage.py createsuperuser
+   ```
+
+   2 **Run the Django Development Server:**
+   Start the development server:
+
+   ```bash
+   python .\manage.py runserver
+   ```
+   
+   
+   3 **Start Tailwind CSS:**  
+    **open another terminal**  
+    Navigate to the Tailwind CSS configuration directory and start Tailwind:
+
+
+   ```bash
+   cd .\tailwind_css_conf\
+   npm run tailwindcss
+   ```
+
+   You can now proceed with:
+   - Accessing the admin panel
+   - Developing or testing application features
