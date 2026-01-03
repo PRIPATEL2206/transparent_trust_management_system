@@ -26,8 +26,9 @@ SECRET_KEY = 'django-insecure-t=@j3za4^1@12i@h0il-uw+(zip6-)y3w@)98$vw8u0k5xtsn-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://8000-firebase-trustmanagement-1767157773363.cluster-udxxdyopu5c7cwhhtg6mmadhvs.cloudworkstations.dev']
+CORS_ORIGIN_WHITELIST = ['https://8000-firebase-trustmanagement-1767157773363.cluster-udxxdyopu5c7cwhhtg6mmadhvs.cloudworkstations.dev']
 
 # Application definition
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -84,6 +86,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = "account.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

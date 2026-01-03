@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+
+<body>
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="txt_field">
+            <input type="text" required name="first_name">
+            <span></span>
+            <label>First Name</label>
+        </div>
+
+        <div class="txt_field">
+            <input type="text" required name="last_name">
+            <span></span>
+            <label>Last Name</label>
+        </div>
+        <div class="txt_field">
+            <input type="text" required name="middel_name">
+            <span></span>
+            <label>Middel Name</label>
+        </div>
+        <div class="txt_field">
+            <input type="tel" required name="phone">
+            <span></span>
+            <label>Phone</label>
+        </div>
+        <div class="txt_field">
+            <textarea name="address"></textarea>
+            <span></span>
+            <label>Address</label>
+        </div>
+
+        <div class="txt_field">
+            <input type="email" required name="email">
+            <span></span>
+            <label>Email</label>
+        </div>
+
+        <div class="txt_field">
+            <input type="password" required name="password1">
+            <span></span>
+            <label>Password</label>
+        </div>
+        <div class="txt_field">
+            <input type="password" required name="password2">
+            <span></span>
+            <label>Password</label>
+        </div>
+
+        <!-- <div class="pass">Forgot Password?</div> -->
+        <input type="submit" value="Register">
+        <div class="signup_link">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </div>
+    </form>
+</body>
+
+</html>
