@@ -1,13 +1,90 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trust Management System{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>Document</title>
 </head>
-<body>
-    <div class="w-10 h-10 bg-red-900"></div>
+
+<body class="bg-teal-50 font-sans flex flex-col min-h-screen">
+
+    <!-- ================= HEADER ================= -->
+    <header class="bg-teal-800 shadow-md z-50">
+        <div class="container mx-auto flex items-center justify-between px-4 py-4">
+
+            <div class="text-2xl font-bold text-white">TMS</div>
+
+            <nav class="hidden md:flex space-x-6 items-center" style="@media (min-width: 768px) { display: flex !important; }">
+                <a href="/about/" class="text-white hover:text-teal-200">About Trust</a>
+                <a href="/contact/" class="text-white hover:text-teal-200">Contact</a>
+                <a href="/membership/" class="text-white hover:text-teal-200">Membership Plans</a>
+                <a href="/membership/join/" class="text-white hover:text-teal-200">Join Trust</a>
+                <a href="/donations/public/" class="text-white hover:text-teal-200">Public Donations</a>
+
+                <div class="relative group z-40">
+                    <button class="flex items-center text-white hover:text-teal-200">
+                        More
+                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-white shadow-md mt-2 rounded-md py-2 w-40">
+                        <a href="#" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Extra Link 1</a>
+                        <a href="#" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Extra Link 2</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="hidden md:block" style="@media (min-width: 768px) { display: block !important; }">
+                <a href="{% url 'login' %}"
+                    class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition">
+                    Login
+                </a>
+            </div>
+
+            <div class="md:hidden">
+                <button id="mobile-menu-btn" class="text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-teal-700">
+            <a href="/about/" class="block px-4 py-2 text-white hover:bg-teal-800">About Trust</a>
+            <a href="/contact/" class="block px-4 py-2 text-white hover:bg-teal-800">Contact</a>
+            <a href="/membership/" class="block px-4 py-2 text-white hover:bg-teal-800">Membership Plans</a>
+            <a href="/membership/join/" class="block px-4 py-2 text-white hover:bg-teal-800">Join Trust</a>
+            <a href="/donations/public/" class="block px-4 py-2 text-white hover:bg-teal-800">Public Donations</a>
+            <a href="/accounts/login/" class="block px-4 py-2 text-white hover:bg-teal-800">Login</a>
+        </div>
+    </header>
+
+    <!-- ================= PAGE CONTENT ================= -->
+        {% block content %}{% endblock %}
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-teal-800 text-white py-4 text-center">
+        &copy; 2026 Trust Management System. All rights reserved.
+    </footer>
+
+    
+    {% block script %}{% endblock script %}
+
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
 </body>
+
 </html>

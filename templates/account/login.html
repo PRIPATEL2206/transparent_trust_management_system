@@ -1,35 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
+<!-- Login Section -->
+    <main class="flex-grow flex items-center justify-center px-4">
+        <div class="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
 
-<body>
-    <form method="POST">
+            <h2 class="text-3xl font-bold text-center text-teal-800 mb-2">
+                Welcome Back
+            </h2>
+            <p class="text-center text-gray-600 mb-6">
+                Sign in to access your Trust account
+            </p>
 
-        {% csrf_token %}
+            <form method="post" novalidate>
+                {% csrf_token %}
 
-        <div class="txt_field">
-            <input type="text" required name="email">
-            <span></span>
-            <label>Email</label>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-1">
+                        Email Address
+                    </label>
+                    <input id="email" type="email" name="email" required placeholder="you@example.com"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    <p id="email-error" class="hidden text-sm text-red-600 mt-1">
+                        Please enter a valid email address.
+                    </p>
+                </div>
+
+
+                <div class="mb-2">
+                    <label class="block text-gray-700 font-medium mb-1">
+                        Password
+                    </label>
+                    <input id="password" type="password" name="password" required minlength="8" maxlength="12"
+                        pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;\\|,.<>\/?]).{8,12}$"
+                        placeholder="********"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    <p id="password-error" class="hidden text-sm text-red-600 mt-1">
+                        Password must be 8–12 characters long, include at least one uppercase letter and one special
+                        character.
+                    </p>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-teal-600 text-white py-2 rounded-lg font-semibold hover:bg-teal-700 transition">
+                    Login
+                </button>
+
+                <p id="form-error" class="hidden text-sm text-red-600 mt-4 text-center">
+                    Please enter valid email and password.
+                </p>
+                
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="#" class="text-sm text-teal-600 hover:underline">
+                    Forgot Password?
+                </a>
+                <p class="text-sm text-gray-600 mt-2">
+                    Don’t have an account?
+                    <a href="{% url 'register' %}" class="text-teal-600 font-medium hover:underline">
+                        Join the Trust
+                    </a>
+                </p>
+            </div>
         </div>
+    </main>
+{% endblock %}
 
-        <div class="">
-            <input type="password" required name="password">
-            <span></span>
-            <label>Password</label>
-        </div>
+{% block script %}
 
-        <input type="submit" value="Login">
-        <div class="signup_link">
-            Not a member? <a href="{% url 'register' %}">Signup</a>
-            <p>Forgot your Password? <a href="">Reset Password</a></p>
-        </div>
-    </form>
-</body>
+<!-- E-mail & Password Validation Script -->
+<script>
+    const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
 
-</html>
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+        const formError = document.getElementById('form-error');
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,12}$/;
+        
+        function validateEmail() {
+            if (!emailRegex.test(emailInput.value)) {
+                emailError.classList.remove('hidden');
+                return false;
+            }
+            emailError.classList.add('hidden');
+            return true;
+        }
+        
+        function validatePassword() {
+            if (!passwordRegex.test(passwordInput.value)) {
+                passwordError.classList.remove('hidden');
+                return false;
+            }
+            passwordError.classList.add('hidden');
+            return true;
+        }
+        
+        emailInput.addEventListener('input', validateEmail);
+        passwordInput.addEventListener('input', validatePassword);
+        
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+
+            if (!isEmailValid || !isPasswordValid) {
+                e.preventDefault();
+                formError.classList.remove('hidden');
+            } else {
+                formError.classList.add('hidden');
+            }
+        });
+    </script>
+    
+{% endblock script %}
