@@ -1,6 +1,40 @@
 node_modules/
-.venv
-db.sqlite3
+
+# Python
 __pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+venv/
+env/
+*.egg-info/
+
+# Django stuff
+*.log
+*.pot
+*.pyc
+db.sqlite3
 media/
-migrations/
+staticfiles/
+
+# If using Django migrations
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Environment variables
+.env
