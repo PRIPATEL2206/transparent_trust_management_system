@@ -14,25 +14,50 @@ class RegisterView(View):
         email = request.POST.get("email")
         password = request.POST.get("password1")
         confirm_password = request.POST.get("password2")
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        middel_name = request.POST.get("middel_name")
-        phone = request.POST.get("phone")
-        address = request.POST.get("address")
-        print(email, password, confirm_password, first_name, last_name, middel_name, phone, address)
-        if password == confirm_password:
-            if User.objects.filter(email=email).exists():
-                messages.error(request, "Email already exists")
-                return redirect('register')
-            else:
-                user = User.objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name, middel_name=middel_name, phone=phone, address=address)
-                user.save()
-                print("User created successfully")
-                messages.success(request, "Account created successfully")
-                return redirect('login')
-        else:
+        accepted2 = request.POST.get("accepted2")
+        accepted1 = request.POST.get("accepted1")
+
+        request_data={
+            'email' : request.POST.get("email"),
+            'first_name' : request.POST.get("firstname"),
+            'last_name' : request.POST.get("lastname"),
+            'middel_name' : request.POST.get("middelname"),
+            'stdcode' : request.POST.get("stdcode"),
+            'phone' : request.POST.get("phone"),
+            'address1' : request.POST.get("address1"),
+            'address2' : request.POST.get("address2"),
+            'city' : request.POST.get("city"),
+            'state' : request.POST.get("state"),
+            'country' : request.POST.get("country"),
+            'zipcode' : request.POST.get("zipcode"),
+            'password' : request.POST.get("password1"),
+        }
+        print(request_data)
+        print(confirm_password,password,accepted2,accepted1)
+        if password != confirm_password :
+            print("Passwords do not match")
             messages.error(request, "Passwords do not match")
             return redirect('register')
+        if accepted1 != "on":
+            print("Please accept the terms and conditions")
+            messages.error(request, "Please accept the terms and conditions")
+            return redirect('register')
+        if accepted2 != "on":
+            print("Please accept the privacy policy")
+            messages.error(request, "Please accept the privacy policy")
+            return redirect('register')
+        
+        if User.objects.filter(email=email).exists():
+            print("Email already exists")
+            messages.error(request, "Email already exists")
+            return redirect('register')
+        
+        user = User.objects.create_user(**request_data)
+        user.save()
+        print("User created successfully")
+        messages.success(request, "Account created successfully")
+        return redirect('login')
+            
 
 
 
