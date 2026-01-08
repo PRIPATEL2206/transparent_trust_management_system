@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="py-20 relative overflow-hidden">
+
+        <div id="image-slider-container" class="absolute inset-0 z-10">
+
+            <div class="slide-image absolute inset-0 bg-cover bg-center opacity-100 transition-opacity duration-2000 ease-in-out"
+                style="background-image: url('{% static "images/aboutbg1.jpg" %}');">
+            </div>
+
+            <div class="slide-image absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-2000 ease-in-out"
+                style="background-image: url('{% static "images/aboutbg2.jpg" %}');">
+            </div>
+
+            <div class="slide-image absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-2000 ease-in-out"
+                style="background-image: url('{% static "images/aboutbg3.jpg" %}');">
+            </div>
+        </div>
+
+        <!-- <div class="absolute inset-0 bg-teal-500 opacity-60 z-20"></div> -->
+
+        <div class="container mx-auto text-center px-4 relative z-30">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+                Welcome to the Trust Management System
+            </h1>
+            <p class="text-white text-lg md:text-xl mb-6">
+                Transparent, secure, and easy management of trust operations.
+            </p>
+            <a href="/membership/join/"
+                class="inline-block bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition">
+                Join Trust Today
+            </a>
+        </div>
+    </section>
+
+    <!-- About Trust Preview -->
+    <section class="py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-semibold mb-6 text-teal-700">About the Trust</h2>
+            <p class="text-gray-700 max-w-2xl mx-auto">
+                Our trust is committed to transparency, accountability, and serving the community efficiently. Explore
+                our membership plans, public donation receipts, and get involved today.
+            </p>
+        </div>
+    </section>
+{% endblock content %}
+    
+{% block script %}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Check if the elements are found
+            const slides = document.querySelectorAll('.slide-image');
+
+            if (slides.length === 0) {
+                console.error("Image slider failed: No elements with class 'slide-image' found.");
+                return; // Stop execution if no slides are found
+            }
+
+            let currentSlide = 0;
+            const slideInterval = 3000; // 3 seconds
+
+            function nextSlide() {
+                // Hide the current slide (opacity 100 -> 0)
+                slides[currentSlide].classList.remove('opacity-100');
+                slides[currentSlide].classList.add('opacity-0');
+
+                // Move to the next slide index
+                currentSlide = (currentSlide + 1) % slides.length;
+
+                // Show the next slide (opacity 0 -> 100)
+                slides[currentSlide].classList.remove('opacity-0');
+                slides[currentSlide].classList.add('opacity-100');
+
+                // --- ADD A TEST LOG HERE ---
+                console.log("Showing slide: " + (currentSlide + 1));
+            }
+
+            // Start the continuous loop
+            setInterval(nextSlide, slideInterval);
+        });
+    </script>
+
+
+    <script>
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+{% endblock script %}
+
+    
