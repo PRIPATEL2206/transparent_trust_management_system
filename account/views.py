@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView,View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, resolve_url
 from .models import CustomUser as User 
 
 # Create your views here.
@@ -58,9 +58,6 @@ class RegisterView(View):
         messages.success(request, "Account created successfully")
         return redirect('login')
             
-
-
-
 class LoginView(View):
     template_name = "account/login.html"
     def get(self, request):
@@ -71,6 +68,8 @@ class LoginView(View):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
+            print("User logged in successfully")
+            messages.success(request, "Logged in successfully")
             return redirect('home')
         else:
             messages.error(request, "Invalid login credentials")
