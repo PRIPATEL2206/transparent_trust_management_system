@@ -40,28 +40,47 @@
                 </div>
             </nav>
 
-            <div class="hidden md:block" style="@media (min-width: 768px) { display: block !important; }">
-                {% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}
-                <a href="{% url 'login' %}"
-                    class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition">
-                    Login
-                </a>
+            <div class="hidden md:flex items-center space-x-4">
+                {% if request.user.is_authenticated %}
+
+                    <!-- Avatar -->
+                    <a href="{% url 'profile' %}"
+                        class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
+                            {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+                    </a>
+
+                    <!-- Logout -->
+                    <a href="{% url 'logout' %}"
+                    class="bg-teal-600 text-white px-5 py-2 rounded-lg hover:bg-teal-700 transition">
+                        Logout
+                    </a>
+
                 {% else %}
-                <a href="{% url 'logout' %}"
+                    <a href="{% url 'login' %}"
                     class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition">
-                    Logout
-                </a>
+                        Login
+                    </a>
                 {% endif %}
             </div>
 
-            <div class="md:hidden">
-                <button id="mobile-menu-btn" class="text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
+            <div class="md:hidden flex items-center space-x-3">
+            {% if request.user.is_authenticated %}
+            <!-- Mobile Avatar (Always Visible) -->
+            <a href="{% url 'profile' %}"
+                class="w-9 h-9 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold">
+                {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+            </a>
+            {% endif %}
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
         </div>
 
         <div id="mobile-menu" class="hidden md:hidden bg-teal-700">
@@ -70,11 +89,16 @@
             <a href="/membership/" class="block px-4 py-2 text-white hover:bg-teal-800">Membership Plans</a>
             <a href="/membership/join/" class="block px-4 py-2 text-white hover:bg-teal-800">Join Trust</a>
             <a href="/donations/public/" class="block px-4 py-2 text-white hover:bg-teal-800">Public Donations</a>
-            {% if request.resolver_match.url_name == 'login' or request.resolver_match.url_name == 'register' %}
-            <a href="{% url 'login' %}" class="block px-4 py-2 text-white hover:bg-teal-800">Login</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-teal-800">
+                    Logout
+                </a>
             {% else %}
-            <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-teal-800">Logout</a>
+                <a href="{% url 'login' %}" class="block px-4 py-2 text-white hover:bg-teal-800">
+                    Login
+                </a>
             {% endif %}
+
         </div>
     </header>
 

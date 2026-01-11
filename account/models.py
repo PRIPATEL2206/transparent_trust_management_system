@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
@@ -49,6 +49,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_email_verified = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    profile_image = models.ImageField(
+        upload_to='profile_pics/',
+        null=True,
+        blank=True
+    )    
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []  # EMAIL_ONLY signup–no other “required” fields

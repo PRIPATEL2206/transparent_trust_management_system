@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Edit Profile
+{% endblock %}
+
+{% block content %}
+  <div class="flex-grow flex items-center justify-center px-4 py-12">
+    <div class="bg-white shadow-xl rounded-2xl w-full max-w-4xl p-8">
+      <h2 class="text-2xl font-bold text-teal-800 text-center mb-8">Profile</h2>
+
+      <div class="flex justify-end mb-6">
+        <button type="button" id="editBtn" class="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-2.5 rounded-lg transition">Edit Profile</button>
+      </div>
+
+      <form method="post" action="{% url "profile" %}" id="profileForm" novalidate data-editable="false">
+        {% csrf_token %}
+
+        <!-- ================= BASIC IDENTITY ================= -->
+        <h3 class="text-xl font-bold text-teal-700 mb-4">Basic Identity</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="input-group">
+            <input name="first_name" value="{{ user.first_name }}" placeholder="First Name" disabled class="mandatory name-field w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+            <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+            <p class="error invalid-error hidden text-sm text-red-600 mt-1">Only alphabets allowed</p>
+          </div>
+
+          <div class="input-group">
+            <input name="middel_name" value="{{ user.middel_name }}" placeholder="Middle Name" disabled class="mandatory name-field w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+            <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+            <p class="error invalid-error hidden text-sm text-red-600 mt-1">Only alphabets allowed</p>
+          </div>
+
+          <div class="input-group">
+            <input name="last_name" value="{{ user.last_name }}" placeholder="Last Name" disabled class="mandatory name-field w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+            <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+            <p class="error invalid-error hidden text-sm text-red-600 mt-1">Only alphabets allowed</p>
+          </div>
+        </div>
+
+        <div class="input-group mb-6">
+          <div class="flex gap-3">
+            <select id="phoneCountry" name="stdcode" disabled class="w-1/4 px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed">
+              <option value="IN" {% if user.country == 'IN' %}selected{% endif %}>🇮🇳 +91</option>
+              <option value="US" {% if user.country == 'US' %}selected{% endif %}>🇺🇸 +1</option>
+            </select>
+
+            <input name="phone" value="{{ user.phone }}" placeholder="Mobile Number" disabled class="mandatory phone-field w-3/4 px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+          </div>
+
+          <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+          <p class="error invalid-error hidden text-sm text-red-600 mt-1">Invalid phone number</p>
+        </div>
+
+        <!-- ================= ADDRESS ================= -->
+        <h3 class="text-xl font-bold text-teal-700 mt-10 mb-4">Address Information</h3>
+
+        <div class="input-group mb-4">
+          <input name="address1" value="{{ user.address1 }}" placeholder="Address Line 1" disabled class="mandatory w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+          <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+        </div>
+
+        <div class="input-group mb-4">
+          <input name="address2" value="{{ user.address2 }}" placeholder="Address Line 2 (Optional)" disabled class="w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="input-group">
+            <input name="city" value="{{ user.city }}" placeholder="City" disabled class="mandatory w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+            <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+          </div>
+
+          <div class="input-group">
+            <select id="country" name="country" disabled class="mandatory w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed">
+              <option value="">Select Country</option>
+              <option value="IN" {% if user.country == 'IN' %}selected{% endif %}>India</option>
+              <option value="US" {% if user.country == 'US' %}selected{% endif %}>United States</option>
+            </select>
+            <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+          </div>
+
+          <div class="input-group">
+            <select id="state" name="state" disabled class="mandatory w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed">
+              <option value="">Select State</option>
+              <option value="Gujarat" {% if user.state == 'Gujarat' %}selected{% endif %}>Gujarat</option>
+              <option value="Maharashtra" {% if user.state == 'Maharashtra' %}selected{% endif %}>Maharashtra</option>
+              <option value="Rajasthan" {% if user.state == 'Rajasthan' %}selected{% endif %}>Rajasthan</option>
+            </select>
+            <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+          </div>
+        </div>
+
+        <div class="input-group mb-8">
+          <input name="zipcode" value="{{ user.zipcode }}" placeholder="ZIP / Pincode" disabled class="mandatory pincode-field w-full px-3 py-3 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed" />
+          <p class="error empty-error hidden text-sm text-red-600 mt-1">This field is mandatory</p>
+          <p class="error invalid-error hidden text-sm text-red-600 mt-1">Invalid ZIP / Pincode</p>
+        </div>
+
+        <!-- ================= BUTTON ================= -->
+        <div class="flex justify-end gap-3 hidden" id="saveContainer">
+          <button type="button" id="cancelBtn" class="border border-gray-400 text-gray-700 font-medium px-6 py-2.5 rounded-lg hover:bg-gray-100 transition">Cancel</button>
+
+          <button type="submit" class="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-2.5 rounded-lg transition">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    const nameRx = /^[A-Za-z]+$/
+    const phoneRules = { IN: 10, US: 10 }
+    const zipRules = { IN: /^\d{6}$/, US: /^\d{5}$/ }
+    const states = {
+      IN: ['Gujarat', 'Maharashtra', 'Rajasthan'],
+      US: ['California', 'Texas', 'New York']
+    }
+    
+    function showError(input, type) {
+      const g = input.closest('.input-group')
+      g.querySelectorAll('.error').forEach((e) => (e.style.display = 'none'))
+      g.querySelector(`.${type}-error`)?.style.setProperty('display', 'block')
+    }
+    function clearError(input) {
+      input
+        .closest('.input-group')
+        ?.querySelectorAll('.error')
+        .forEach((e) => (e.style.display = 'none'))
+    }
+    
+    function validate(input) {
+      const v = input.value.trim()
+      if (!v) {
+        showError(input, 'empty')
+        return false
+      }
+    
+      if (input.classList.contains('name-field') && !nameRx.test(v)) return showError(input, 'invalid'), false
+    
+      if (input.classList.contains('phone-field') && v.length !== phoneRules[phoneCountry.value]) return showError(input, 'invalid'), false
+    
+      if (input.classList.contains('pincode-field') && !zipRules[country.value]?.test(v)) return showError(input, 'invalid'), false
+    
+      clearError(input)
+      return true
+    }
+    
+    document.querySelectorAll('.mandatory').forEach((i) => {
+      i.addEventListener('input', () => validate(i))
+      i.addEventListener('blur', () => validate(i))
+    })
+    
+    country.addEventListener('change', () => {
+      state.innerHTML = '<option value="">Select State</option>'
+      states[country.value]?.forEach((s) => (state.innerHTML += `<option>${s}</option>`))
+    })
+    
+    profileForm.onsubmit = (e) => {
+      if (profileForm.dataset.editable !== 'true') {
+          e.preventDefault()
+          return
+      }
+
+      let valid = true
+      document.querySelectorAll('.mandatory').forEach((i) => {
+          if (!validate(i)) valid = false
+      })
+
+      if (!valid) {
+          e.preventDefault()
+          return
+      }
+
+      // Enable all fields before sending so their values appear in POST
+      fields.forEach(f => f.disabled = false)
+  }
+
+    
+    const editBtn = document.getElementById('editBtn')
+    const saveContainer = document.getElementById('saveContainer')
+    const form = document.getElementById('profileForm')
+    const fields = form.querySelectorAll('input, select, textarea')
+    
+    editBtn.addEventListener('click', () => {
+      fields.forEach((field) => {
+        field.disabled = false
+      })
+    
+      saveContainer.classList.remove('hidden')
+      editBtn.classList.add('hidden')
+      form.dataset.editable = 'true'
+    })
+    
+    const cancelBtn = document.getElementById('cancelBtn')
+    
+    /* Store initial form state */
+    const initialFormData = new FormData(form)
+    
+    cancelBtn.addEventListener('click', () => {
+      /* Reset values */
+      for (let [name, value] of initialFormData.entries()) {
+        const field = form.elements[name]
+        if (field) field.value = value
+      }
+    
+      /* Disable fields again */
+      fields.forEach((field) => (field.disabled = true))
+    
+      /* Hide save / show edit */
+      saveContainer.classList.add('hidden')
+      editBtn.classList.remove('hidden')
+      form.dataset.editable = 'false'
+    
+      /* Clear all validation errors */
+      document.querySelectorAll('.error').forEach((err) => {
+        err.style.display = 'none'
+      })
+    })
+  </script>
+{% endblock %}
