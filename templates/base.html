@@ -44,9 +44,19 @@
                 {% if request.user.is_authenticated %}
 
                     <!-- Avatar -->
-                    <a href="{% url 'profile' %}"
+                    <a href="{% url 'profile' %}" class="w-10 h-10 block">
+                    {% if request.user.profile_image %}
+                        <img
+                        src="{{ request.user.profile_image.url }}"
+                        class="w-10 h-10 rounded-full object-cover border-2 border-teal-600"
+                        alt="Avatar"
+                        >
+                    {% else %}
+                        <div
                         class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
-                            {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+                        {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
                     </a>
 
                     <!-- Logout -->
@@ -66,10 +76,21 @@
             <div class="md:hidden flex items-center space-x-3">
             {% if request.user.is_authenticated %}
             <!-- Mobile Avatar (Always Visible) -->
-            <a href="{% url 'profile' %}"
-                class="w-9 h-9 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold">
+            <a href="{% url 'profile' %}" class="w-10 h-10 block">
+            {% if request.user.profile_image %}
+                <img
+                src="{{ request.user.profile_image.url }}"
+                class="w-10 h-10 rounded-full object-cover border-2 border-teal-600"
+                alt="Avatar"
+                >
+            {% else %}
+                <div
+                class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
                 {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+                </div>
+            {% endif %}
             </a>
+
             {% endif %}
 
             <!-- Mobile Menu Button -->

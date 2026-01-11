@@ -148,6 +148,12 @@ def profile_view(request):
                       'address1', 'address2', 'city', 'state', 'country', 'zipcode']:
             if field in request.POST:
                 setattr(user, field, request.POST.get(field))
+        
+        if 'remove_profile_image' in request.POST:
+            user.profile_image = None
+        elif 'profile_image' in request.FILES:
+            user.profile_image = request.FILES['profile_image']
+            
         user.save()
         messages.success(request, "Profile updated successfully!")
         return redirect('profile')

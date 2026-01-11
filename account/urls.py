@@ -25,4 +25,4 @@ urlpatterns = [
     path('verification-failed/', TemplateView.as_view(template_name="account/failed_email_verification.html"), name='email_verification_failed'),
     path('resend-verification/', ResendVerificationView.as_view(), name='resend_verification'),
     path('edit_profile', profile_view, name='profile'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
