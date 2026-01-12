@@ -10,6 +10,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 # Create your views here.
 class RegisterView(View):
@@ -133,3 +136,26 @@ class LoginView(View):
 def logoutView(request):
     logout(request)
     return redirect('login')
+
+@login_required
+def profile_view(request):
+    user = request.user
+
+    if request.method == "POST":
+            
+        # Update user fields
+        for field in ['first_name', 'middel_name', 'last_name', 'stdcode', 'phone', 
+                      'address1', 'address2', 'city', 'state', 'country', 'zipcode']:
+            if field in request.POST:
+                setattr(user, field, request.POST.get(field))
+        
+        if 'remove_profile_image' in request.POST:
+            user.profile_image = None
+        elif 'profile_image' in request.FILES:
+            user.profile_image = request.FILES['profile_image']
+            
+        user.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect('profile')
+
+    return render(request, 'account/edit_profile.html', {'user': user})
