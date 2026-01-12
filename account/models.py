@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import os
 
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
@@ -32,6 +33,31 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []  # EMAIL_ONLY signup–no other “required” fields
+
+    objects = CustomUserManager()
+    
+    def _user_profile_image_path(instance, filename):
+        ext = filename.split('.')[-1]
+        return f'profile_pics/user_{instance.id}.{ext}'
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            try:
+                old = type(self).objects.get(pk=self.pk)
+                if old.profile_image and old.profile_image != self.profile_image:
+                    if os.path.isfile(old.profile_image.path):
+                        os.remove(old.profile_image.path)
+            except type(self).DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.email
+    
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
@@ -50,15 +76,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_email_verified = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     profile_image = models.ImageField(
-        upload_to='profile_pics/',
+        upload_to=_user_profile_image_path,
         null=True,
         blank=True
     )    
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []  # EMAIL_ONLY signup–no other “required” fields
-
-    objects = CustomUserManager()
-
-    def __str__(self):
-        return self.email
