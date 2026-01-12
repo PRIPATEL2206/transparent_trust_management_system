@@ -280,6 +280,7 @@
 
     // Hide edit image button
     editImageBtn.classList.add('hidden');
+    removeImageBtn.classList.add('hidden');
 
     // Reset avatar
     {% if user.profile_image %}
@@ -315,28 +316,38 @@
 
   // Preview selected image
   profileImageInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    // If image avatar doesn't exist yet, create it
-    if (!avatarImg) {
-      const img = document.createElement('img');
-      img.id = 'profileAvatarImg';
-      img.className = 'w-28 h-28 rounded-full object-cover border-4 border-teal-700';
-      img.src = ev.target.result;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
 
-      // Remove character avatar if present
-      if (avatarChar) avatarChar.remove();
+      let img = document.getElementById('profileAvatarImg');
+      const charDiv = document.getElementById('profileAvatarChar');
 
-      profileImageInput.parentElement.querySelector('.relative').prepend(img);
-    } else {
-      avatarImg.src = ev.target.result;
-    }
-  };
-  reader.readAsDataURL(file);
-});
+      // If image exists, just update its src
+      if (img) {
+        img.src = ev.target.result;
+      } else {
+        // Create new image element
+        img = document.createElement('img');
+        img.id = 'profileAvatarImg';
+        img.className = 'w-28 h-28 rounded-full object-cover border-4 border-teal-700';
+        img.src = ev.target.result;
+
+        // Remove letter avatar if present
+        if (charDiv) charDiv.remove();
+
+        // Add new image
+        profileImageInput.parentElement.querySelector('.relative').prepend(img);
+      }
+
+      // Reset remove flag in case user had clicked "Remove" before
+      removeImageFlag = false;
+    };
+
+    reader.readAsDataURL(file);
+  });
 
 const removeImageBtn = document.getElementById('removeImageBtn');
 
