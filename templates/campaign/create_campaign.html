@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    
+  {% csrf_token %}
+
+    <p>
+    <label for="id_title">Title:</label>
+    <input type="text" name="title" value="xscd" class="form-control" maxlength="200" required="" id="id_title">
+    {% if form.title.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.title.errors|striptags }}
+    </p>
+    {% endif %}
+  </p>
+  <p>
+    <label for="id_slug">Slug:</label>
+    <input type="text" name="slug" value="cdcd" class="form-control" maxlength="220" aria-describedby="id_slug_helptext" id="id_slug">
+    {% if form.slug.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.slug.errors|striptags }}
+    </p>
+    {% endif %}
+      <span class="helptext" id="id_slug_helptext">If left blank, it will be generated from the title.</span>
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_short_description">Short description:</label>
+    <textarea name="short_description" cols="40" rows="3" class="form-control" maxlength="500" id="id_short_description">cdc</textarea>
+    {% if form.short_description.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.short_description.errors|striptags }}
+    </p>
+    {% endif %}
+    
+  </p>
+
+  
+  <p>
+    <label for="id_description">Description:</label>
+    <textarea name="description" cols="40" rows="6" class="form-control" id="id_description">cdc</textarea>
+    {% if form.description.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.description.errors|striptags }}
+    </p>
+    {% endif %}
+  </p>
+  <p>
+    <label for="id_category">Category:</label>
+    <select name="category" class="form-select" id="id_category">
+  <option value="">---------</option>
+
+  <option value="1" selected="">ca</option>
+
+</select>
+{% if form.category.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.category.errors|striptags }}
+    </p>
+    {% endif %}
+  </p>
+
+  
+  <p>
+    <label for="id_tags">Tags:</label>
+    <input type="text" name="tags" value="aas,asa" class="form-control" aria-describedby="id_tags_helptext" id="id_tags">
+    
+      <span class="helptext" id="id_tags_helptext">Enter comma-separated tags (e.g., health, education, women).</span>
+      {% if form.tags.errors %}
+      <p class="text-red-500 text-sm mt-1">
+          {{ form.tags.errors|striptags }}
+      </p>
+      {% endif %}
+    
+  </p>
+
+  
+  <p>
+    <label for="id_cover_image">Cover image:</label>
+    <input type="file" name="cover_image" accept="image/*" aria-describedby="id_cover_image_helptext" id="id_cover_image">
+    
+      <span class="helptext" id="id_cover_image_helptext">Upload a cover image (optional).</span>
+      {% if form.cover_image.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.cover_image.errors|striptags }}
+    </p>
+    {% endif %}
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_start_date">Start date &amp; time:</label>
+    <input type="datetime-local" name="start_date" value="2026-01-12T15:11" class="form-control" required="" id="id_start_date">
+    {% if form.start_date.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.start_date.errors|striptags }}
+    </p>
+    {% endif %}
+  </p>
+
+  
+  <p>
+    <label for="id_end_date">End date &amp; time:</label>
+    <input type="datetime-local" name="end_date" value="2026-01-23T15:11" class="form-control" aria-describedby="id_end_date_helptext" id="id_end_date">
+    
+      <span class="helptext" id="id_end_date_helptext">Must be after the start date/time.</span>
+      {% if form.end_date.errors %}
+      <p class="text-red-500 text-sm mt-1">
+          {{ form.end_date.errors|striptags }}
+      </p>
+      {% endif %}
+    
+  </p>
+
+  
+  <p>
+    <label for="id_timezone_name">Timezone:</label>
+    <select name="timezone_name" class="form-select" id="id_timezone_name">
+  <option value="Asia/Kolkata" selected="">Asia/Kolkata (IST)</option>
+
+  <option value="UTC">UTC</option>
+
+  <option value="Asia/Dubai">Asia/Dubai</option>
+
+  <option value="Europe/London">Europe/London</option>
+
+  <option value="America/New_York">America/New_York</option>
+
+</select>
+{% if form.timezone_name.errors %}
+<p class="text-red-500 text-sm mt-1">
+    {{ form.timezone_name.errors|striptags }}
+</p>
+{% endif %}
+    
+  </p>
+
+  
+  <p>
+    <label for="id_goal_amount">Goal amount:</label>
+    <input type="number" name="goal_amount" value="123" class="form-control" step="0.01" min="0.00" id="id_goal_amount">
+    {% if form.goal_amount.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.goal_amount.errors|striptags }}
+    </p>
+    {% endif %}
+    
+  </p>
+
+  
+  <p>
+    <label for="id_minimum_donation_amount">Minimum donation amount:</label>
+    <input type="number" name="minimum_donation_amount" value="12" class="form-control" step="0.01" min="0.00" required="" id="id_minimum_donation_amount">
+    
+    {% if form.minimum_donation_amount.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.minimum_donation_amount.errors|striptags }}
+    </p>
+    {% endif %}
+  </p>
+
+  
+  <p>
+    <label for="id_maximum_donation_amount">Maximum donation amount:</label>
+    <input type="number" name="maximum_donation_amount" value="15" class="form-control" step="0.01" min="0.00" aria-describedby="id_maximum_donation_amount_helptext" id="id_maximum_donation_amount">
+    
+      <span class="helptext" id="id_maximum_donation_amount_helptext">Optional; must be ≥ minimum if set.</span>
+    
+      {% if form.maximum_donation_amount.errors %}
+      <p class="text-red-500 text-sm mt-1">
+          {{ form.maximum_donation_amount.errors|striptags }}
+      </p>
+      {% endif %}
+  </p>
+
+  
+  <p>
+    <label for="id_gallery_bulk">Add gallery images (you can select multiple):</label>
+    <input type="file" name="gallery_bulk" multiple="" class="form-control" id="id_gallery_bulk">
+    
+    
+    {% if form.gallery_bulk.errors %}
+    <p class="text-red-500 text-sm mt-1">
+        {{ form.gallery_bulk.errors|striptags }}
+    </p>
+    {% endif %}
+    
+  </p>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock content %}
+{% block script %}
+{% endblock script %}
