@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import TemplateView,View
@@ -10,9 +9,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.utils.decorators import method_decorator
+
+from .decorators import email_verification_required
 
 # Create your views here.
 class RegisterView(View):
@@ -41,23 +40,17 @@ class RegisterView(View):
             'zipcode' : request.POST.get("zipcode"),
             'password' : request.POST.get("password1"),
         }
-        print(request_data)
-        print(confirm_password,password,accepted2,accepted1)
         if password != confirm_password :
-            print("Passwords do not match")
             messages.error(request, "Passwords do not match")
             return redirect('register')
         if accepted1 != "on":
-            print("Please accept the terms and conditions")
             messages.error(request, "Please accept the terms and conditions")
             return redirect('register')
         if accepted2 != "on":
-            print("Please accept the privacy policy")
             messages.error(request, "Please accept the privacy policy")
             return redirect('register')
         
         if User.objects.filter(email=email).exists():
-            print("Email already exists")
             messages.error(request, "Email already exists")
             return redirect('register')
         
@@ -99,7 +92,6 @@ class VerifyEmailView(View):
         else:
             return redirect('email_verification_failed')
 
-
 class ResendVerificationView(View):
     def post(self, request):
         email = request.POST.get("email")
@@ -120,12 +112,10 @@ class LoginView(View):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             if not user.is_email_verified:
-                print("email not verified")
                 _send_verification_email(request, user)
                 messages.error(request, "Please verify your email first.")
                 return redirect('email_sent')
             login(request, user)
-            print("User logged in successfully")
             messages.success(request, "Logged in successfully")
             return redirect('home')
         else:
@@ -137,12 +127,18 @@ def logoutView(request):
     logout(request)
     return redirect('login')
 
-@login_required
-def profile_view(request):
-    user = request.user
+@method_decorator(email_verification_required, name='dispatch')
+class ProfileUpdateView(View):
+    template_name = "account/edit_profile.html"
+    
+    def get(self, request):
+        user = request.user
+        context = {'user': user}
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        user = request.user
 
-    if request.method == "POST":
-            
         # Update user fields
         for field in ['first_name', 'middel_name', 'last_name', 'stdcode', 'phone', 
                       'address1', 'address2', 'city', 'state', 'country', 'zipcode']:
@@ -157,5 +153,3 @@ def profile_view(request):
         user.save()
         messages.success(request, "Profile updated successfully!")
         return redirect('profile')
-
-    return render(request, 'account/edit_profile.html', {'user': user})
