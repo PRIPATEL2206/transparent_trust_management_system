@@ -5,6 +5,7 @@ from .models import Scheme,SchemeImages
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from account.decorators import email_verification_required
+from django.utils.decorators import method_decorator
 
 
 # Create your views here.
