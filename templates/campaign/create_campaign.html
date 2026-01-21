@@ -1,200 +1,249 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-<form method="post" enctype="multipart/form-data">
-    
-  {% csrf_token %}
+  <div class="flex justify-center px-4 py-10">
+    <div class="w-full max-w-3xl bg-white shadow-lg rounded-xl p-8">
+      <!-- Title -->
+      <h2 class="text-2xl font-bold text-teal-800 text-center mb-8">Create Campaign</h2>
 
-    <p>
-    <label for="id_title">Title:</label>
-    <input type="text" name="title" value="xscd" class="form-control" maxlength="200" required="" id="id_title">
-    {% if form.title.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.title.errors|striptags }}
-    </p>
-    {% endif %}
-  </p>
-  <p>
-    <label for="id_slug">Slug:</label>
-    <input type="text" name="slug" value="cdcd" class="form-control" maxlength="220" aria-describedby="id_slug_helptext" id="id_slug">
-    {% if form.slug.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.slug.errors|striptags }}
-    </p>
-    {% endif %}
-      <span class="helptext" id="id_slug_helptext">If left blank, it will be generated from the title.</span>
-    
-    
-  </p>
+      <form method="post" enctype="multipart/form-data" id="campaignForm" class="space-y-6">
+        {% csrf_token %}
 
-  
-  <p>
-    <label for="id_short_description">Short description:</label>
-    <textarea name="short_description" cols="40" rows="3" class="form-control" maxlength="500" id="id_short_description">cdc</textarea>
-    {% if form.short_description.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.short_description.errors|striptags }}
-    </p>
-    {% endif %}
-    
-  </p>
+        <!-- Title -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Title *</label>
+          <input type="text" name="title" required placeholder="Enter campaign title" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" />
+          {% if form.title.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.title.errors|striptags }}</p>
+          {% endif %}
+        </div>
 
-  
-  <p>
-    <label for="id_description">Description:</label>
-    <textarea name="description" cols="40" rows="6" class="form-control" id="id_description">cdc</textarea>
-    {% if form.description.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.description.errors|striptags }}
-    </p>
-    {% endif %}
-  </p>
-  <p>
-    <label for="id_category">Category:</label>
-    <select name="category" class="form-select" id="id_category">
-  <option value="">---------</option>
+        <!-- Slug (Optional) -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Slug (optional)</label>
+          <input type="text" name="slug" placeholder="Leave blank to auto-generate" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          <p class="text-sm text-gray-500 mt-1">If left blank, it will be generated from the title.</p>
+        </div>
 
-  <option value="1" selected="">ca</option>
+        <!-- Short Description -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Short Description *</label>
+          <textarea name="short_description" rows="3" required placeholder="Brief summary of the campaign (max 500 characters)" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"></textarea>
+          {% if form.short_description.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.short_description.errors|striptags }}</p>
+          {% endif %}
+        </div>
 
-</select>
-{% if form.category.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.category.errors|striptags }}
-    </p>
-    {% endif %}
-  </p>
+        <!-- Description -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Description *</label>
+          <textarea name="description" rows="6" required placeholder="Detailed description of the campaign" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500"></textarea>
+          {% if form.description.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.description.errors|striptags }}</p>
+          {% endif %}
+        </div>
 
-  
-  <p>
-    <label for="id_tags">Tags:</label>
-    <input type="text" name="tags" value="aas,asa" class="form-control" aria-describedby="id_tags_helptext" id="id_tags">
-    
-      <span class="helptext" id="id_tags_helptext">Enter comma-separated tags (e.g., health, education, women).</span>
-      {% if form.tags.errors %}
-      <p class="text-red-500 text-sm mt-1">
-          {{ form.tags.errors|striptags }}
-      </p>
-      {% endif %}
-    
-  </p>
+        <!-- Category -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Category *</label>
+          <select name="category" required class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-teal-500">
+            <option value="">---------</option>
+            <option value="1">ca</option>
+          </select>
+          {% if form.category.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.category.errors|striptags }}</p>
+          {% endif %}
+        </div>
 
-  
-  <p>
-    <label for="id_cover_image">Cover image:</label>
-    <input type="file" name="cover_image" accept="image/*" aria-describedby="id_cover_image_helptext" id="id_cover_image">
-    
-      <span class="helptext" id="id_cover_image_helptext">Upload a cover image (optional).</span>
-      {% if form.cover_image.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.cover_image.errors|striptags }}
-    </p>
-    {% endif %}
-    
-    
-  </p>
+        <!-- Tags -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Tags *</label>
+          <input type="text" name="tags" required placeholder="health, education, women" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+        </div>
 
-  
-  <p>
-    <label for="id_start_date">Start date &amp; time:</label>
-    <input type="datetime-local" name="start_date" value="2026-01-12T15:11" class="form-control" required="" id="id_start_date">
-    {% if form.start_date.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.start_date.errors|striptags }}
-    </p>
-    {% endif %}
-  </p>
+        <!-- Cover Image -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Cover Image *</label>
+          <input type="file" name="cover_image" accept="image/*" required class="w-full border rounded-lg px-3 py-2" />
+        </div>
 
-  
-  <p>
-    <label for="id_end_date">End date &amp; time:</label>
-    <input type="datetime-local" name="end_date" value="2026-01-23T15:11" class="form-control" aria-describedby="id_end_date_helptext" id="id_end_date">
-    
-      <span class="helptext" id="id_end_date_helptext">Must be after the start date/time.</span>
-      {% if form.end_date.errors %}
-      <p class="text-red-500 text-sm mt-1">
-          {{ form.end_date.errors|striptags }}
-      </p>
-      {% endif %}
-    
-  </p>
+        <!-- Dates -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Start Date & Time *</label>
+            <input type="datetime-local" name="start_date" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          </div>
 
-  
-  <p>
-    <label for="id_timezone_name">Timezone:</label>
-    <select name="timezone_name" class="form-select" id="id_timezone_name">
-  <option value="Asia/Kolkata" selected="">Asia/Kolkata (IST)</option>
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">End Date & Time *</label>
+            <input type="datetime-local" name="end_date" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          </div>
+        </div>
 
-  <option value="UTC">UTC</option>
+        <!-- Timezone -->
+        <!-- Timezone (UNCHANGED VALUES) -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Timezone *</label>
+          <select name="timezone_name" required class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-teal-500">
+            <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+            <option value="UTC">UTC</option>
+            <option value="Asia/Dubai">Asia/Dubai</option>
+            <option value="Europe/London">Europe/London</option>
+            <option value="America/New_York">America/New_York</option>
+          </select>
+          {% if form.timezone_name.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.timezone_name.errors|striptags }}</p>
+          {% endif %}
+        </div>
 
-  <option value="Asia/Dubai">Asia/Dubai</option>
+        <!-- Donation Amounts -->
+        <div class="grid md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Goal Amount *</label>
+            <input type="number" step="0.01" min="0" name="goal_amount" required placeholder="Total target amount" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          </div>
 
-  <option value="Europe/London">Europe/London</option>
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Minimum Donation *</label>
+            <input type="number" step="0.01" min="0" name="minimum_donation_amount" required placeholder="Minimum allowed" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          </div>
 
-  <option value="America/New_York">America/New_York</option>
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Maximum Donation *</label>
+            <input type="number" step="0.01" min="0" name="maximum_donation_amount" required placeholder="Maximum allowed" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          </div>
+        </div>
 
-</select>
-{% if form.timezone_name.errors %}
-<p class="text-red-500 text-sm mt-1">
-    {{ form.timezone_name.errors|striptags }}
-</p>
-{% endif %}
-    
-  </p>
+        <!-- Gallery -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Gallery Images *</label>
+          <input type="file" name="gallery_bulk" multiple required class="w-full border rounded-lg px-3 py-2" />
+        </div>
 
-  
-  <p>
-    <label for="id_goal_amount">Goal amount:</label>
-    <input type="number" name="goal_amount" value="123" class="form-control" step="0.01" min="0.00" id="id_goal_amount">
-    {% if form.goal_amount.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.goal_amount.errors|striptags }}
-    </p>
-    {% endif %}
-    
-  </p>
+        <!-- Submit -->
+        <div class="text-center pt-6">
+          <button type="submit" class="bg-teal-600 text-white px-10 py-3 rounded-lg hover:bg-teal-700 transition font-medium">Create Campaign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
 
-  
-  <p>
-    <label for="id_minimum_donation_amount">Minimum donation amount:</label>
-    <input type="number" name="minimum_donation_amount" value="12" class="form-control" step="0.01" min="0.00" required="" id="id_minimum_donation_amount">
-    
-    {% if form.minimum_donation_amount.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.minimum_donation_amount.errors|striptags }}
-    </p>
-    {% endif %}
-  </p>
-
-  
-  <p>
-    <label for="id_maximum_donation_amount">Maximum donation amount:</label>
-    <input type="number" name="maximum_donation_amount" value="15" class="form-control" step="0.01" min="0.00" aria-describedby="id_maximum_donation_amount_helptext" id="id_maximum_donation_amount">
-    
-      <span class="helptext" id="id_maximum_donation_amount_helptext">Optional; must be ≥ minimum if set.</span>
-    
-      {% if form.maximum_donation_amount.errors %}
-      <p class="text-red-500 text-sm mt-1">
-          {{ form.maximum_donation_amount.errors|striptags }}
-      </p>
-      {% endif %}
-  </p>
-
-  
-  <p>
-    <label for="id_gallery_bulk">Add gallery images (you can select multiple):</label>
-    <input type="file" name="gallery_bulk" multiple="" class="form-control" id="id_gallery_bulk">
-    
-    
-    {% if form.gallery_bulk.errors %}
-    <p class="text-red-500 text-sm mt-1">
-        {{ form.gallery_bulk.errors|striptags }}
-    </p>
-    {% endif %}
-    
-  </p>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-
-{% endblock content %}
 {% block script %}
-{% endblock script %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const startDate = document.querySelector('[name="start_date"]');
+  const endDate = document.querySelector('[name="end_date"]');
+  const minAmount = document.querySelector('[name="minimum_donation_amount"]');
+  const maxAmount = document.querySelector('[name="maximum_donation_amount"]');
+  const form = document.getElementById("campaignForm");
+
+  /* ---------- Helper: error message ---------- */
+  function showError(input, message) {
+    let error = input.parentElement.querySelector(".js-error");
+    if (!error) {
+      error = document.createElement("p");
+      error.className = "js-error text-red-500 text-sm mt-1";
+      input.parentElement.appendChild(error);
+    }
+    error.innerText = message;
+  }
+
+  function clearError(input) {
+    const error = input.parentElement.querySelector(".js-error");
+    if (error) error.remove();
+  }
+
+  /* ---------- DATE VALIDATION ---------- */
+
+  // End date disabled initially
+  endDate.disabled = true;
+
+  // Set min start date = today
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  const todayISO = now.toISOString().slice(0, 16);
+  startDate.min = todayISO;
+
+  startDate.addEventListener("input", function () {
+    clearError(startDate);
+
+    if (!this.value) {
+      endDate.disabled = true;
+      endDate.value = "";
+      return;
+    }
+
+    // Enable end date immediately
+    endDate.disabled = false;
+    endDate.min = this.value;
+
+    if (new Date(this.value) < new Date(todayISO)) {
+      showError(startDate, "Start date cannot be earlier than today.");
+    }
+  });
+
+  endDate.addEventListener("input", function () {
+    clearError(endDate);
+
+    if (!startDate.value) {
+      showError(endDate, "Please select a start date first.");
+      return;
+    }
+
+    if (new Date(this.value) < new Date(startDate.value)) {
+      showError(endDate, "End date must be after the start date.");
+    }
+  });
+
+  /* ---------- AMOUNT VALIDATION ---------- */
+
+  function validateAmounts() {
+    clearError(minAmount);
+    clearError(maxAmount);
+
+    const minVal = parseFloat(minAmount.value);
+    const maxVal = parseFloat(maxAmount.value);
+
+    if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
+      showError(maxAmount, "Maximum amount cannot be less than minimum amount.");
+    }
+  }
+
+  minAmount.addEventListener("input", validateAmounts);
+  maxAmount.addEventListener("input", validateAmounts);
+
+  /* ---------- FINAL SUBMIT CHECK ---------- */
+  form.addEventListener("submit", function (e) {
+    let hasError = false;
+
+    // Date validation
+    if (startDate.value && new Date(startDate.value) < new Date(todayISO)) {
+      showError(startDate, "Start date cannot be earlier than today.");
+      hasError = true;
+    }
+
+    if (startDate.value && endDate.value &&
+        new Date(endDate.value) < new Date(startDate.value)) {
+      showError(endDate, "End date must be after the start date.");
+      hasError = true;
+    }
+
+    // Amount validation
+    const minVal = parseFloat(minAmount.value);
+    const maxVal = parseFloat(maxAmount.value);
+
+    if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
+      showError(maxAmount, "Maximum amount cannot be less than minimum amount.");
+      hasError = true;
+    }
+
+    if (hasError) {
+      e.preventDefault();
+    }
+  });
+
+});
+</script>
+{% endblock %}
