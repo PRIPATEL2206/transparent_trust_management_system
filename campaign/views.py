@@ -60,7 +60,7 @@ class CampaignListView(ListView):
                 "goal_amount", "cover_image", "category__name"
             )
         )
-        if not request.user.is_superuser:
+        if not request.user.is_approval_user:
             qs = qs.filter(Q(request__proposed_by=request.user))
 
         # Search (title, short_description, description, category name, status)

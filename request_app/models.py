@@ -24,3 +24,12 @@ class Request(models.Model):
     )
     request_start_date=models.DateTimeField(auto_now_add=True)
     request_end_date=models.DateTimeField(blank=True,null=True)
+
+    def can_approve(self, user):
+        print("-------------------",user.is_approval_user)
+        return user.is_approval_user
+    def can_cancel(self, user):
+        return user.is_approval_user or self.proposed_by == user
+    def can_chat(self, user):
+        return user.is_approval_user or self.proposed_by == user
+        
