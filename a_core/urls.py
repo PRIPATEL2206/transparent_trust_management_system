@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("account/",include("account.urls"),name="account"),
     path("campaign/",include("campaign.urls"),name="campaign"),
+    path("request/",include("request_app.urls"),name="request_app"),
     path("",include("home.urls"),name="home")
 ]
 

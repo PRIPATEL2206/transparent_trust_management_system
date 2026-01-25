@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.forms import inlineformset_factory
 
-from .models import Scheme, SchemeCategory, SchemeImages, SchemeStatus, Visibility,Request
+from .models import Campaign, CampaignCategory, CampaignImages, CampaignStatus, Visibility
+from request_app.models import Request
 from account.models import CustomUser
 
 
@@ -26,61 +27,17 @@ class CommaSeparatedTagsField(forms.CharField):
 class MultiFileInput(forms.ClearableFileInput):
         allow_multiple_selected = True
 
-class SchemeForm(forms.ModelForm):
+class CampaignForm(forms.ModelForm):
     # Field customizations for UX
-    title = forms.CharField(
-        max_length=200,
-        label="Title",
-        widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-    slug = forms.SlugField(
-        max_length=220,
-        required=False,  # allow auto-generation from title if blank
-        label="Slug",
-        help_text="If left blank, it will be generated from the title.",
-        widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-    short_description = forms.CharField(
-        max_length=500,
-        required=False,
-        label="Short description",
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 3})
-    )
-    description = forms.CharField(
-        required=False,
-        label="Description",
-        widget=forms.Textarea(attrs={"class": "form-control", "rows": 6})
-    )
-    category = forms.ModelChoiceField(
-        queryset=SchemeCategory.objects.all(),
-        required=False,
-        label="Category",
-        widget=forms.Select(attrs={"class": "form-select"})
-    )
-
-    tags = CommaSeparatedTagsField(
-        required=False,
-        label="Tags",
-        help_text="Enter comma-separated tags (e.g., health, education, women).",
-        widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-
-    cover_image = forms.ImageField(
-        required=False,
-        label="Cover image",
-        help_text="Upload a cover image (optional)."
-    )
-
-    start_date = forms.DateTimeField(
-        label="Start date & time",
-        widget=forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"})
-    )
-    end_date = forms.DateTimeField(
-        required=False,
-        label="End date & time",
-        widget=forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
-        help_text="Must be after the start date/time."
-    )
+    title = forms.CharField(max_length=200,)
+    slug = forms.SlugField(max_length=220,required=False)
+    short_description = forms.CharField(max_length=500,)  
+    description = forms.CharField()
+    category = forms.ModelChoiceField(queryset=CampaignCategory.objects.all(),)
+    tags = CommaSeparatedTagsField()
+    cover_image = forms.ImageField()
+    start_date = forms.DateTimeField()   
+    end_date = forms.DateTimeField()
 
     TIMEZONE_CHOICES = [
         ("Asia/Kolkata", "Asia/Kolkata (IST)"),
@@ -92,40 +49,26 @@ class SchemeForm(forms.ModelForm):
     timezone_name = forms.ChoiceField(
         choices=TIMEZONE_CHOICES,
         initial="Asia/Kolkata",
-        label="Timezone",
-        widget=forms.Select(attrs={"class": "form-select"})
     )
 
     goal_amount = forms.DecimalField(
-        required=False,
-        max_digits=12,
         decimal_places=2,
         min_value=Decimal("0.00"),
-        label="Goal amount",
-        widget=forms.NumberInput(attrs={"class": "form-control", "step": "0.01"})
     )
     minimum_donation_amount = forms.DecimalField(
         required=True,
-        max_digits=12,
         decimal_places=2,
         min_value=Decimal("0.00"),
-        label="Minimum donation amount",
-        widget=forms.NumberInput(attrs={"class": "form-control", "step": "0.01"})
     )
     maximum_donation_amount = forms.DecimalField(
-        required=False,
-        max_digits=12,
         decimal_places=2,
         min_value=Decimal("0.00"),
-        label="Maximum donation amount",
-        help_text="Optional; must be ≥ minimum if set.",
-        widget=forms.NumberInput(attrs={"class": "form-control", "step": "0.01"})
     )
 
 
 
     class Meta:
-        model = Scheme
+        model = Campaign
         # Excluding ForeignKey 'request' so you can set it in the view (e.g., from current request/context)
         exclude = ("request",'visibility','status')
 
@@ -140,7 +83,7 @@ class SchemeForm(forms.ModelForm):
         slug = self.cleaned_data.get("slug") or slugify(self.cleaned_data.get("title") or "")
         if not slug:
             raise ValidationError("Slug cannot be empty. Please provide a title.")
-        qs = Scheme.objects.filter(slug=slug)
+        qs = Campaign.objects.filter(slug=slug)
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
         if qs.exists():
@@ -171,7 +114,7 @@ class SchemeForm(forms.ModelForm):
         Two-phase save to ensure cover_image and gallery images use instance.id in upload_to:
         1) Save instance without the cover image to get a primary key (id).
         2) Assign the cover image and save again.
-        3) Create SchemeImages from gallery_bulk (multiple) after instance exists.
+        3) Create CampaignImages from gallery_bulk (multiple) after instance exists.
         Also ensures tags are stored as a unique list preserving order.
         """
         instance = super().save(commit=False)
