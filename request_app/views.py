@@ -5,7 +5,6 @@ from django.db.models import Q
 from . import models,forms
 
 # Create your views here.
-# cckdmkcmd
 
 class RequestDetailView(DetailView):
     model = models.Request
