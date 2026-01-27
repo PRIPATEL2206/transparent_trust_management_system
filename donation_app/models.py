@@ -4,7 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from campaign.models import Campaign
-
+from request_app import models as request_models
 # Create your models here.
 class Currency(models.TextChoices):
     INR = "INR", "INR"
@@ -51,7 +51,7 @@ class Donation(models.Model):
                 raise ValueError(f"Donation must be at most {max_amt}.")
 
             # only allow donations to ACTIVE + PUBLIC campaigns
-            if not (self.campaign.status == CampaignStatus.ACTIVE and self.campaign.visibility == Visibility.PUBLIC):
+            if not (self.campaign.status() == request_models.RequestStatus.ACTIVE and self.campaign.visibility == Visibility.PUBLIC):
                 raise ValueError("Donations are allowed only for ACTIVE and PUBLIC campaigns.")
 
 

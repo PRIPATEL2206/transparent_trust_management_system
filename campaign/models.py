@@ -26,14 +26,6 @@ class CampaignCategory(models.Model):
     def __str__(self):
         return self.name
 
-class CampaignStatus(models.TextChoices):
-    DRAFT = "DRAFT", "Draft"
-    PENDING_REVIEW = "PENDING_REVIEW", "Pending Review"
-    APPROVED = "APPROVED", "Approved"
-    REJECTED = "REJECTED", "Rejected"
-    ACTIVE = "ACTIVE", "Active"
-    PAUSED = "PAUSED", "Paused"
-    ARCHIVED = "ARCHIVED", "Archived"
 
 class Visibility(models.TextChoices):
     PRIVATE = "PRIVATE", "Private"
@@ -92,7 +84,6 @@ class Campaign(models.Model):
     # gallery = models.ForeignKey(CampaignImages, on_delete=models.CASCADE, null=True, blank=True)
 
     # Governance & workflow
-    status = models.CharField(max_length=20, choices=CampaignStatus.choices, default=CampaignStatus.DRAFT, db_index=True)
     visibility = models.CharField(max_length=10, choices=Visibility.choices, default=Visibility.PRIVATE)
     
     request=models.OneToOneField(Request, on_delete=models.DO_NOTHING,related_name="campaign")
@@ -116,7 +107,7 @@ class Campaign(models.Model):
     class Meta:
         # ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["status", "visibility"]),
+            models.Index(fields=["visibility"]),
             models.Index(fields=["start_date", "end_date"]),
             models.Index(fields=["category"]),
         ]
@@ -133,6 +124,11 @@ class Campaign(models.Model):
     # -----------------------
     # Derived metrics
     # -----------------------
+
+    @property
+    def status(self):
+        return self.request.status
+
     @property
     def amount_raised(self) -> Decimal:
         total = self.donations.aggregate(total=Sum("amount")).get("total")
@@ -164,7 +160,6 @@ class Campaign(models.Model):
         if self.maximum_donation_amount and self.minimum_donation_amount:
             if self.maximum_donation_amount < self.minimum_donation_amount:
                 raise ValueError("maximum_donation_amount must be >= minimum_donation_amount.")
-
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -219,7 +214,7 @@ class Campaign(models.Model):
         Move APPROVED -> ACTIVE when start_date arrives.
         Can be called by a cron or admin action.
         """
-        if self.status in (CampaignStatus.APPROVED, CampaignStatus.PAUSED):
+        if self.status in (CampaignStatus.APPROVED, CampaignStatus.CANCEL):
             if self.is_in_active_window:
                 old = self.status
                 self.status = CampaignStatus.ACTIVE
@@ -233,7 +228,7 @@ class Campaign(models.Model):
         if self.status != CampaignStatus.ACTIVE:
             raise ValueError("Only ACTIVE Campaigns can be paused.")
         old = self.status
-        self.status = CampaignStatus.PAUSED
+        self.status = CampaignStatus.CANCEL
         self.save()
 
     @transaction.atomic

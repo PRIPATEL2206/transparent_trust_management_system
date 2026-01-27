@@ -9,6 +9,8 @@ from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.core.paginator import Paginator
 
+from request_app.models import RequestStatus
+
 
 
 # Create your views here.
@@ -56,7 +58,7 @@ class CampaignListView(ListView):
         qs = (
             Campaign.objects.select_related("category")
             .only(
-                "id", "title", "slug", "status", "start_date", "end_date",
+                "id", "title", "slug", "request__status", "start_date", "end_date",
                 "goal_amount", "cover_image", "category__name"
             )
         )
@@ -71,14 +73,14 @@ class CampaignListView(ListView):
                 | Q(short_description__icontains=q)
                 | Q(description__icontains=q)
                 | Q(category__name__icontains=q)
-                | Q(status__icontains=q)
+                | Q(request__status__icontains=q)
             )
             # If you want to include tags (JSONField) and you're on PostgreSQL:
             # qs = qs.filter(Q(tags__icontains=q) | Q(...existing...))
 
         # Filter by status (ensure values match your CampaignStatus choices)
         if status:
-            qs = qs.filter(status=status)
+            qs = qs.filter(request__status=status)
 
         # Sorting
         sort_field = self.SORT_MAP.get(sort, "title")
@@ -123,4 +125,5 @@ class CampaignListView(ListView):
             "page_obj": context.get("page_obj"),
             # "object_list" is already provided as per context_object_name
         })
+        context['RequestStatus']=RequestStatus
         return context

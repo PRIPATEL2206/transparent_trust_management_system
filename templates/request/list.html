@@ -6,12 +6,7 @@
 
 <!-- Page header -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-4 flex items-center justify-between">
-  <h1 class="text-2xl font-bold text-gray-900">Campaigns</h1>
-  <a href="{% url 'campaign:create' %}"
-     class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-    <span class="text-lg leading-none">＋</span>
-    Create Campaign
-  </a>
+  <h1 class="text-2xl font-bold text-gray-900">Requests</h1>
 </div>
 
 <!-- Filters (Search + Status only) -->
@@ -53,23 +48,20 @@
           <!-- Sortable headers: clicking toggles asc/desc and preserves current query -->
           <th class="px-3 py-3">#</th>
           <th class="px-4 py-3">
-            {% if sort == 'title' and dir == 'asc' %}
-              <a href="?{% querystring sort='title' dir='desc' page=1 %}" class="hover:underline text-gray-900">Title ▲</a>
-            {% elif sort == 'title' and dir == 'desc' %}
-              <a href="?{% querystring sort='title' dir='asc' page=1 %}" class="hover:underline text-gray-900">Title ▼</a>
+            {% if sort == 'requested_for' and dir == 'asc' %}
+              <a href="?{% querystring sort='requested_for' dir='desc' page=1 %}" class="hover:underline text-gray-900">Requested For ▲</a>
+            {% elif sort == 'requested_for' and dir == 'desc' %}
+              <a href="?{% querystring sort='requested_for' dir='asc' page=1 %}" class="hover:underline text-gray-900">Requested For ▼</a>
             {% else %}
-              <a href="?{% querystring sort='title' dir='asc' page=1 %}" class="hover:underline text-gray-900">Title</a>
+              <a href="?{% querystring sort='requested_for' dir='asc' page=1 %}" class="hover:underline text-gray-900">Requested For</a>
             {% endif %}
           </th>
 
           <th class="px-4 py-3">
-            {% if sort == 'category' and dir == 'asc' %}
-              <a href="?{% querystring sort='category' dir='desc' page=1 %}" class="hover:underline text-gray-900">Category ▲</a>
-            {% elif sort == 'category' and dir == 'desc' %}
-              <a href="?{% querystring sort='category' dir='asc' page=1 %}" class="hover:underline text-gray-900">Category ▼</a>
-            {% else %}
-              <a href="?{% querystring sort='category' dir='asc' page=1 %}" class="hover:underline text-gray-900">Category</a>
-            {% endif %}
+            Proposed By
+          </th>
+          <th class="px-4 py-3">
+            Reviewed By
           </th>
 
           <th class="px-4 py-3">
@@ -91,39 +83,25 @@
               <a href="?{% querystring sort='start_date' dir='asc' page=1 %}" class="hover:underline text-gray-900">Start</a>
             {% endif %}
           </th>
-
           <th class="px-4 py-3">
-            {% if sort == 'end_date' and dir == 'asc' %}
-              <a href="?{% querystring sort='end_date' dir='desc' page=1 %}" class="hover:underline text-gray-900">End ▲</a>
-            {% elif sort == 'end_date' and dir == 'desc' %}
-              <a href="?{% querystring sort='end_date' dir='asc' page=1 %}" class="hover:underline text-gray-900">End ▼</a>
+            {% if sort == 'last_updated' and dir == 'asc' %}
+              <a href="?{% querystring sort='last_updated' dir='desc' page=1 %}" class="hover:underline text-gray-900">Last Updated ▲</a>
+            {% elif sort == 'last_updated' and dir == 'desc' %}
+              <a href="?{% querystring sort='last_updated' dir='asc' page=1 %}" class="hover:underline text-gray-900">Last Updated ▼</a>
             {% else %}
-              <a href="?{% querystring sort='end_date' dir='asc' page=1 %}" class="hover:underline text-gray-900">End</a>
+              <a href="?{% querystring sort='last_updated' dir='asc' page=1 %}" class="hover:underline text-gray-900">Last Updated</a>
             {% endif %}
           </th>
-
-          <th class="px-4 py-3">
-            {% if sort == 'goal_amount' and dir == 'asc' %}
-              <a href="?{% querystring sort='goal_amount' dir='desc' page=1 %}" class="hover:underline text-gray-900">Goal ▲</a>
-            {% elif sort == 'goal_amount' and dir == 'desc' %}
-              <a href="?{% querystring sort='goal_amount' dir='asc' page=1 %}" class="hover:underline text-gray-900">Goal ▼</a>
-            {% else %}
-              <a href="?{% querystring sort='goal_amount' dir='asc' page=1 %}" class="hover:underline text-gray-900">Goal</a>
-            {% endif %}
-          </th>
-          <th class="px-4 py-3">
-            Request
-          </th>
-          
         </tr>
       </thead>
 
       <tbody class="text-sm text-gray-800">
         {% for item in object_list %}
           <tr class="border-t hover:bg-gray-50">
-            <td class="px-3 py-3">{{forloop.counter}}</td>
-            <td class="px-4 py-3">{{ item.title }}</td>
-            <td class="px-4 py-3">{{ item.category.name }}</td>
+            <td class="px-3 py-3">{{ forloop.counter }}</td>
+            <td class="px-4 py-3"><a href="{% url 'request_app:detail' pk=item.id %}">{{ item.requested_for }}</a></td>
+            <td class="px-4 py-3">{{ item.proposed_by.full_name }}</td>
+            <td class="px-4 py-3">{{ item.reviewed_by.full_name }}</td>
             <td class="px-4 py-3">
               <span class="px-2 py-1 rounded text-xs
                            {% if item.status == 'APPROVED' %} bg-green-100 text-green-700
@@ -135,9 +113,7 @@
               </span>
             </td>
             <td class="px-4 py-3">{{ item.start_date }}</td>
-            <td class="px-4 py-3">{{ item.end_date }}</td>
-            <td class="px-4 py-3">{{ item.goal_amount }}</td>
-            <td class="px-4 py-3"><a href="{% url 'request_app:detail' pk=item.request.id %}">request</a></td>
+            <td class="px-4 py-3">{{ item.last_updated }}</td>
           </tr>
         {% empty %}
           <tr>

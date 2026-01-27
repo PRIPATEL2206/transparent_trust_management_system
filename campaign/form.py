@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.forms import inlineformset_factory
 
-from .models import Campaign, CampaignCategory, CampaignImages, CampaignStatus, Visibility
+from .models import Campaign, CampaignCategory, CampaignImages, Visibility
 from request_app.models import Request
 from account.models import CustomUser
 

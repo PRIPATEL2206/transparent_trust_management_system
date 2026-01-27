@@ -23,6 +23,7 @@
                 <a href="/about/" class="text-white hover:text-teal-200">About Trust</a>
                 <a href="/contact/" class="text-white hover:text-teal-200">Contact</a>
                 <a href="{% url 'campaign:list' %}" class="text-white hover:text-teal-200">Campaign</a>
+                <a href="{% url 'request_app:list' %}" class="text-white hover:text-teal-200">Request</a>
                 <a href="/membership/join/" class="text-white hover:text-teal-200">Join Trust</a>
                 <a href="/donations/public/" class="text-white hover:text-teal-200">Public Donations</a>
 
@@ -124,8 +125,9 @@
     </header>
 
     <!-- ================= PAGE CONTENT ================= -->
-    {% block content %}{% endblock content %}
-
+     <main class="min-h-screen">
+        {% block content %}{% endblock content %}
+     </main>
     <!-- ================= FOOTER ================= -->
     <footer class="bg-teal-800 text-white py-4 text-center">
         &copy; 2026 Trust Management System. All rights reserved.
@@ -137,6 +139,7 @@
         {% for message in messages %}
         <div class="toast-message transition-opacity {% if message.tags == 'success' %} bg-green-300 {% elif message.tags == 'error' %} bg-red-300 {% endif %}text-white p-3 rounded-lg shadow-md min-w-56 text-center mb-3">
             {{ message }}
+            {% comment %} <p class='bg-red-600 text-black'> {{ message.tags }} </p> {% endcomment %}
         </div>
         {% endfor %}
     </div>
