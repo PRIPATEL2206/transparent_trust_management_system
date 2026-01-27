@@ -1,0 +1,160 @@
+
+{% extends "base.html" %}
+{% load querystring %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-4 flex items-center justify-between">
+  <h1 class="text-2xl font-bold text-gray-900">Requests</h1>
+</div>
+
+<!-- Filters (Search + Status only) -->
+<form method="get"
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 border rounded-lg p-4">
+    <input type="text"
+           name="q"
+           value="{{ q }}"
+           placeholder="Search..."
+           class="col-span-2 md:col-span-2 px-3 py-2 border rounded-md w-full text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+    <select name="status"
+            class="px-3 py-2 border rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      <option value="">-- All statuses --</option>
+          {% for value, label in RequestStatus.choices %}
+          <option value="{{ value }}" {% if value == status_value %}selected{% endif %}>
+            {{ label }}
+          </option>
+          {% endfor %}
+    </select>
+
+    <div class="md:col-start-3 flex md:justify-end">
+      <button type="submit"
+              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+        Apply
+        
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Table container (centered) -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="overflow-x-auto border rounded-lg bg-white shadow">
+    <table class="min-w-full table-auto">
+      <thead class="bg-gray-100">
+        <tr class="text-left text-sm font-semibold text-gray-800">
+          <!-- Sortable headers: clicking toggles asc/desc and preserves current query -->
+          <th class="px-3 py-3">#</th>
+          <th class="px-4 py-3">
+            {% if sort == 'requested_for' and dir == 'asc' %}
+              <a href="?{% querystring sort='requested_for' dir='desc' page=1 %}" class="hover:underline text-gray-900">Requested For ▲</a>
+            {% elif sort == 'requested_for' and dir == 'desc' %}
+              <a href="?{% querystring sort='requested_for' dir='asc' page=1 %}" class="hover:underline text-gray-900">Requested For ▼</a>
+            {% else %}
+              <a href="?{% querystring sort='requested_for' dir='asc' page=1 %}" class="hover:underline text-gray-900">Requested For</a>
+            {% endif %}
+          </th>
+
+          <th class="px-4 py-3">
+            Proposed By
+          </th>
+          <th class="px-4 py-3">
+            Reviewed By
+          </th>
+
+          <th class="px-4 py-3">
+            {% if sort == 'status' and dir == 'asc' %}
+              <a href="?{% querystring sort='status' dir='desc' page=1 %}" class="hover:underline text-gray-900">Status ▲</a>
+            {% elif sort == 'status' and dir == 'desc' %}
+              <a href="?{% querystring sort='status' dir='asc' page=1 %}" class="hover:underline text-gray-900">Status ▼</a>
+            {% else %}
+              <a href="?{% querystring sort='status' dir='asc' page=1 %}" class="hover:underline text-gray-900">Status</a>
+            {% endif %}
+          </th>
+
+          <th class="px-4 py-3">
+            {% if sort == 'start_date' and dir == 'asc' %}
+              <a href="?{% querystring sort='start_date' dir='desc' page=1 %}" class="hover:underline text-gray-900">Start ▲</a>
+            {% elif sort == 'start_date' and dir == 'desc' %}
+              <a href="?{% querystring sort='start_date' dir='asc' page=1 %}" class="hover:underline text-gray-900">Start ▼</a>
+            {% else %}
+              <a href="?{% querystring sort='start_date' dir='asc' page=1 %}" class="hover:underline text-gray-900">Start</a>
+            {% endif %}
+          </th>
+          <th class="px-4 py-3">
+            {% if sort == 'last_updated' and dir == 'asc' %}
+              <a href="?{% querystring sort='last_updated' dir='desc' page=1 %}" class="hover:underline text-gray-900">Last Updated ▲</a>
+            {% elif sort == 'last_updated' and dir == 'desc' %}
+              <a href="?{% querystring sort='last_updated' dir='asc' page=1 %}" class="hover:underline text-gray-900">Last Updated ▼</a>
+            {% else %}
+              <a href="?{% querystring sort='last_updated' dir='asc' page=1 %}" class="hover:underline text-gray-900">Last Updated</a>
+            {% endif %}
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="text-sm text-gray-800">
+        {% for item in object_list %}
+          <tr class="border-t hover:bg-gray-50">
+            <td class="px-3 py-3">{{ forloop.counter }}</td>
+            <td class="px-4 py-3"><a href="{% url 'request_app:detail' pk=item.id %}">{{ item.requested_for }}</a></td>
+            <td class="px-4 py-3">{{ item.proposed_by.full_name }}</td>
+            <td class="px-4 py-3">{{ item.reviewed_by.full_name }}</td>
+            <td class="px-4 py-3">
+              <span class="px-2 py-1 rounded text-xs
+                           {% if item.status == 'APPROVED' %} bg-green-100 text-green-700
+                           {% elif item.status == 'DRAFT' %} bg-yellow-100 text-yellow-700
+                           {% elif item.status == 'COMPLETED' %} bg-blue-100 text-blue-700
+                           {% elif item.status == 'REJECTED' %} bg-red-100 text-red-700
+                           {% else %} bg-gray-100 text-gray-700 {% endif %}">
+                {{ item.status }}
+              </span>
+            </td>
+            <td class="px-4 py-3">{{ item.start_date }}</td>
+            <td class="px-4 py-3">{{ item.last_updated }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="px-4 py-6 text-center text-gray-500">
+              No campaigns found.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination (numbers below the table) -->
+  {% if is_paginated %}
+    <div class="flex items-center justify-center gap-1 mt-6 mb-10">
+      {% if page_obj.has_previous %}
+        <a href="?{% querystring page=page_obj.previous_page_number %}"
+           class="px-3 py-2 rounded border bg-white text-gray-700 hover:bg-gray-50">
+          Previous
+        </a>
+      {% endif %}
+
+      {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="px-3 py-2 rounded border border-indigo-600 bg-indigo-600 text-white">{{ num }}</span>
+        {% else %}
+          <a href="?{% querystring page=num %}"
+             class="px-3 py-2 rounded border bg-white text-gray-700 hover:bg-gray-50">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?{% querystring page=page_obj.next_page_number %}"
+           class="px-3 py-2 rounded border bg-white text-gray-700 hover:bg-gray-50">
+          Next
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+{% endblock content %}
+
+{% block script %}{% endblock script %}
