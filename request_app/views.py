@@ -9,7 +9,7 @@ from . import models,form
 
 
 # Create your views here.
-
+@method_decorator(email_verification_required, name='dispatch')
 class RequestDetailView(DetailView):
     model = models.Request
     template_name = "request/detail.html"
@@ -38,6 +38,7 @@ class RequestDetailView(DetailView):
         context['back_url'] = self.request.META.get('HTTP_REFERER') or self.request.path
         return context
 
+@method_decorator(email_verification_required, name='dispatch')
 class RequestMessageCreateView(CreateView):
     model = models.RequestMessage
     form_class = form.RequestMessageForm
@@ -46,6 +47,7 @@ class RequestMessageCreateView(CreateView):
         requestMassge=models.RequestMessage.objects.create(sender=request.user,request=models.Request.objects.get(pk=pk),massges=request.POST.get('massges'))
         return redirect('request_app:detail',pk=pk)
 
+@method_decorator(email_verification_required, name='dispatch')
 class RequestUpdateStatusView(UpdateView):
     model = models.Request
     fields = ['status']
@@ -104,7 +106,7 @@ class RequestListView(ListView):
     def get_queryset(self):
         request = self.request
         q = request.GET.get("q", "").strip()
-        status = request.GET.get("status", "DRAFT").strip()
+        status = request.GET.get("status", "").strip()
         sort = request.GET.get("sort", self.ordering).strip()
         direction = request.GET.get("dir", "asc").strip().lower()  # 'asc' or 'desc'
 
@@ -117,6 +119,9 @@ class RequestListView(ListView):
         )
         if not request.user.is_approval_user:
             qs = qs.filter(Q(proposed_by=request.user))
+        else:
+            qs = qs.filter(~Q(status=models.RequestStatus.DRAFT))
+
 
         # Search (title, short_description, description, category name, status)
         if q:
@@ -135,7 +140,8 @@ class RequestListView(ListView):
             # qs = qs.filter(Q(tags__icontains=q) | Q(...existing...))
 
         # Filter by status (ensure values match your CampaignStatus choices)
-        qs = qs.filter(status=status)
+        if status:
+            qs = qs.filter(status=status)
 
         # Sorting
         sort_field = self.SORT_MAP.get(sort, self.ordering)

@@ -77,7 +77,7 @@ class Request(models.Model):
     def can_reject(self, user):
         return  user.is_approval_user and self.status in (RequestStatus.PENDING_REVIEW)
     def can_cancel(self, user):
-        return (user.is_approval_user or self.proposed_by == user) and self.status  in (RequestStatus.PENDING_REVIEW,RequestStatus.DRAFT)
+        return  self.proposed_by == user and self.status  in (RequestStatus.PENDING_REVIEW,RequestStatus.DRAFT)
     def can_chat(self, user):
         return (user.is_approval_user or self.proposed_by == user) and self.status  in (RequestStatus.PENDING_REVIEW,RequestStatus.DRAFT)
     def can_send_for_review(self, user):
