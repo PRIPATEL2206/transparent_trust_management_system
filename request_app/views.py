@@ -54,7 +54,6 @@ class RequestUpdateStatusView(UpdateView):
     http_method_names = ['post']
 
     def get_success_url(self):
-        print(self.request.path)
         return self.request.META.get('HTTP_REFERER') or self.request.path
     def post(self,request,*args,**kwargs):
         try:

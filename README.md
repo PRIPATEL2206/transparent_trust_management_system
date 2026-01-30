@@ -121,6 +121,7 @@ The Trust Management System (TMS) is a web-based application designed to manage 
 
    ```bash
    cd .\tailwind_css_conf\
+   npm i
    npm run tailwindcss
    ```
 
