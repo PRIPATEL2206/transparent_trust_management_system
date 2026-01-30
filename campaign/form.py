@@ -5,7 +5,7 @@ from django.utils.text import slugify
 from django.forms import inlineformset_factory
 
 from .models import Campaign, CampaignCategory, CampaignImages, Visibility
-from request_app.models import Request
+from request_app.models import Request,RequestStatus
 from account.models import CustomUser
 
 
@@ -35,7 +35,7 @@ class CampaignForm(forms.ModelForm):
     description = forms.CharField()
     category = forms.ModelChoiceField(queryset=CampaignCategory.objects.all(),)
     tags = CommaSeparatedTagsField()
-    cover_image = forms.ImageField()
+    cover_image = forms.ImageField(required=False)
     start_date = forms.DateTimeField()   
     end_date = forms.DateTimeField()
 
@@ -124,15 +124,15 @@ class CampaignForm(forms.ModelForm):
 
         if not instance.slug:
             instance.slug = slugify(instance.title)
-
-        instance.cover_image = self.files.get("cover_image")
+        instance.cover_image = self.cleaned_data.get("cover_image") or self.files.get("cover_image")
         instance.request=Request.objects.create(proposed_by=user)
-
         if commit:
-            if not instance.pk:
+            if instance.request.status==RequestStatus.DRAFT:
+                # print("instance.id",instance.id)
                 instance.save()
             else:
-                instance.save()
+                raise Exception("Campaign request is not in draft status")
+
             for f in self.files.getlist('gallery_bulk'):
                 instance.gallery.create(image=f)
 
