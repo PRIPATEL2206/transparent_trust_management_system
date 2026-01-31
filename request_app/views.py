@@ -44,7 +44,7 @@ class RequestMessageCreateView(CreateView):
     form_class = form.RequestMessageForm
 
     def post(self,request,pk,*args,**kwargs):  
-        requestMassge=models.RequestMessage.objects.create(sender=request.user,request=models.Request.objects.get(pk=pk),massges=request.POST.get('massges'))
+        requestMassge=models.RequestMessage.objects.create(sender=request.user,request=models.Request.objects.get(pk=pk),message=request.POST.get('message'))
         return redirect('request_app:detail',pk=pk)
 
 @method_decorator(email_verification_required, name='dispatch')

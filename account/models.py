@@ -2,6 +2,9 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from a_core.utils.storage import OverwriteStorage
+import os
+
 
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
@@ -37,6 +40,11 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    def _get_image_url(instance, filename):
+        _, ext = os.path.splitext(filename)
+        safe_filename = f"{instance.first_name}_{instance.last_name}_{instance.id}{ext}"
+        return f"profile_pics/{safe_filename}"
+
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
@@ -56,7 +64,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_approval_user = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     profile_image = models.ImageField(
-        upload_to='profile_pics/',
+        upload_to=_get_image_url,
+        storage=OverwriteStorage(),
         null=True,
         blank=True
     )    

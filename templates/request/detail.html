@@ -1,179 +1,194 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold text-gray-900">
-                Request #{{ request_obj.id }}
-                {% if request_obj.campaign %}· {{ request_obj.campaign.title }}{% endif %}
-            </h1>
-            <a href="{{ back_url }}"
-               class="px-3 py-2 text-sm rounded bg-gray-100 border hover:bg-gray-200">← Back to Requests</a>
-        </div>
-        <!-- Content grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Campaign Details -->
-            <div class="md:col-span-2 space-y-4">
-                <div class="p-4 border rounded-lg bg-white">
-                    {% if request_obj.campaign %}
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900">{{ request_obj.campaign.title }}</h2>
-                                <p class="text-gray-500 text-sm">
-                                    Slug: <span class="font-mono">{{ request_obj.campaign.slug }}</span>
-                                </p>
-                            </div>
-                            <div>
-                                <span class="px-2 py-1 text-xs rounded {% if request_obj.campaign.status == 'ACTIVE' %} bg-green-100 text-green-700 {% elif request_obj.campaign.status == 'DRAFT' %} bg-yellow-100 text-yellow-700 {% elif request_obj.campaign.status == 'COMPLETED' %} bg-blue-100 text-blue-700 {% elif request_obj.campaign.status == 'CANCELLED' %} bg-red-100 text-red-700 {% else %} bg-gray-100 text-gray-700 {% endif %}">
-                                    {{ request_obj.campaign.status }}
-                                </span>
-                            </div>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
+            Request #{{ request_obj.id }}
+            {% if request_obj.campaign %}· {{ request_obj.campaign.title }}{% endif %}
+        </h1>
+        <a href="{{ back_url }}" class="px-3 py-2 text-sm rounded bg-gray-100 border hover:bg-gray-200">← Back to Requests</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="md:col-span-2 space-y-4">
+            <div class="p-4 border rounded-lg bg-white">
+                {% if request_obj.campaign %}
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900">{{ request_obj.campaign.title }}</h2>
+                            <p class="text-gray-500 text-sm">
+                                Slug: <span class="font-mono">{{ request_obj.campaign.slug }}</span>
+                            </p>
                         </div>
-                        {% if request_obj.campaign.short_description %}
-                            <p class="mt-3 text-gray-800">{{ request_obj.campaign.short_description }}</p>
-                        {% endif %}
-                        {% if request_obj.campaign.description %}
-                            <div class="mt-3 prose max-w-none">{{ request_obj.campaign.description|linebreaks }}</div>
-                        {% endif %}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 text-sm">
-                            <div class="p-3 border rounded">
-                                <p class="text-gray-500">Category</p>
-                                <p class="font-medium text-gray-900">{{ request_obj.campaign.category.name }}</p>
-                            </div>
-                            <div class="p-3 border rounded">
-                                <p class="text-gray-500">Tags</p>
-                                <p class="font-medium text-gray-900">
-                                    {% for t in request_obj.campaign.tags %}
-                                        <span class="mr-2">#{{ t }}</span>{% empty %}—
-                                    {% endfor %}
-                                </p>
-                            </div>
-                            <div class="p-3 border rounded">
-                                <p class="text-gray-500">Start → End</p>
-                                <p class="font-medium text-gray-900">
-                                    {{ request_obj.campaign.start_date }} → {{ request_obj.campaign.end_date|default:"—" }}
-                                </p>
-                            </div>
-                            <div class="p-3 border rounded">
-                                <p class="text-gray-500">Goal Amount</p>
-                                <p class="font-medium text-gray-900">{{ request_obj.campaign.goal_amount|default:"—" }}</p>
-                            </div>
+                        <div>
+                            <span class="px-2 py-1 text-xs rounded
+                                {% if request_obj.campaign.status == 'ACTIVE' %} bg-green-100 text-green-700
+                                {% elif request_obj.campaign.status == 'DRAFT' %} bg-yellow-100 text-yellow-700
+                                {% elif request_obj.campaign.status == 'COMPLETED' %} bg-blue-100 text-blue-700
+                                {% elif request_obj.campaign.status == 'CANCELLED' %} bg-red-100 text-red-700
+                                {% else %} bg-gray-100 text-gray-700
+                                {% endif %}">
+                                {{ request_obj.campaign.status }}
+                            </span>
                         </div>
-                        {% if request_obj.campaign.cover_image %}
-                            <div class="mt-4">
-                                <img src="{{ request_obj.campaign.cover_image.url }}"
-                                     alt="{{ request_obj.campaign.title }}"
-                                     class="rounded-lg border max-h-80 object-cover">
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        <p class="text-gray-500">No campaign linked to this request.</p>
+                    </div>
+
+                    {% if request_obj.campaign.short_description %}
+                        <p class="mt-3 text-gray-800">{{ request_obj.campaign.short_description }}</p>
                     {% endif %}
-                </div>
+
+                    {% if request_obj.campaign.description %}
+                        <div class="mt-3 prose max-w-none">
+                            {{ request_obj.campaign.description|linebreaks }}
+                        </div>
+                    {% endif %}
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 text-sm">
+                        <div class="p-3 border rounded">
+                            <p class="text-gray-500">Category</p>
+                            <p class="font-medium text-gray-900">{{ request_obj.campaign.category.name }}</p>
+                        </div>
+                        <div class="p-3 border rounded">
+                            <p class="text-gray-500">Tags</p>
+                            <p class="font-medium text-gray-900">
+                                {% for t in request_obj.campaign.tags %}
+                                    <span class="mr-2">#{{ t }}</span>
+                                {% empty %}—
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <div class="p-3 border rounded">
+                            <p class="text-gray-500">Start → End</p>
+                            <p class="font-medium text-gray-900">
+                                {{ request_obj.campaign.start_date|date:"M j, Y" }}
+                                →
+                                {{ request_obj.campaign.end_date|default:"—"|date:"M j, Y" }}
+                            </p>
+                        </div>
+                        <div class="p-3 border rounded">
+                            <p class="text-gray-500">Goal Amount</p>
+                            <p class="font-medium text-gray-900">{{ request_obj.campaign.goal_amount|default:"—" }}</p>
+                        </div>
+                    </div>
+
+                    {% if request_obj.campaign.cover_image %}
+                        <div class="mt-4">
+                            <img src="{{ request_obj.campaign.cover_image.url }}"
+                                 alt="{{ request_obj.campaign.title }}"
+                                 class="rounded-lg border max-h-80 object-cover">
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-gray-500">No campaign linked to this request.</p>
+                {% endif %}
             </div>
-            <!-- Request Meta + Actions -->
-            <div class="space-y-4">
-                <!-- Request Meta -->
-                <div class="p-4 border rounded-lg bg-white">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-2">Request</h3>
-                    <dl class="text-sm">
-                        <div class="flex justify-between py-1">
-                            <dt class="text-gray-500">Proposed by</dt>
-                            <dd class="text-gray-900">
-                                {{ request_obj.proposed_by.get_full_name|default:request_obj.proposed_by.email|default:"—" }}
-                            </dd>
-                        </div>
-                        <div class="flex justify-between py-1">
-                            <dt class="text-gray-500">Approver</dt>
-                            <dd class="text-gray-900">
-                                {% if request_obj.reviewed_by %}
-                                    {{ request_obj.reviewed_by.get_full_name|default:request_obj.reviewed_by.email|default:"—" }}
-                                {% else %}
-                                {% endif %}
-                            </dd>
-                        </div>
-                        <div class="flex justify-between py-1">
-                            <dt class="text-gray-500">Opened</dt>
-                            <dd class="text-gray-900">
-                                {{ request_obj.start_date }}
-                            </dd>
-                        </div>
-                        <div class="flex justify-between py-1">
-                            <dt class="text-gray-500">Last Updated On</dt>
-                            <dd class="text-gray-900">
-                                {{ request_obj.last_updated|default:"—" }}
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-                <!-- Actions -->
-                <div class="p-4 border rounded-lg bg-white space-y-3">
-                    <h3 class="text-sm font-semibold text-gray-700">Actions</h3>
-                    {% if available_options %}
+        </div>
+
+        <div class="space-y-4">
+            <div class="p-4 border rounded-lg bg-white">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Request</h3>
+                <dl class="text-sm">
+                    <div class="flex justify-between py-1">
+                        <dt class="text-gray-500">Proposed by</dt>
+                        <dd class="text-gray-900">
+                            {{ request_obj.proposed_by.get_full_name|default:request_obj.proposed_by.email|default:"—" }}
+                        </dd>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <dt class="text-gray-500">Approver</dt>
+                        <dd class="text-gray-900">
+                            {% if request_obj.reviewed_by %}
+                                {{ request_obj.reviewed_by.get_full_name|default:request_obj.reviewed_by.email|default:"—" }}
+                            {% else %}—{% endif %}
+                        </dd>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <dt class="text-gray-500">Opened</dt>
+                        <dd class="text-gray-900">{{ request_obj.start_date|date:"M j, Y, g:i a" }}</dd>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <dt class="text-gray-500">Last Updated On</dt>
+                        <dd class="text-gray-900">{{ request_obj.last_updated|default:"—"|date:"M j, Y, g:i a" }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="p-4 border rounded-lg bg-white space-y-3">
+                <h3 class="text-sm font-semibold text-gray-700">Actions</h3>
+                {% if available_options %}
                     <form method="post"
-                          class="inline"
                           action="{% url 'request_app:update' pk=request_obj.id %}"
                           onsubmit="return confirm('Are you sure you want to change the status?');">
                         {% csrf_token %}
                         <label for="id_status" class="sr-only">Change status</label>
                         <select id="id_status" name="status" class="px-3 py-2 border rounded">
-                            {% for id,value in available_options.items %}<option value="{{ id }}">{{ value }}</option>{% endfor %}
+                            {% for id, value in available_options.items %}
+                                <option value="{{ id }}">{{ value }}</option>
+                            {% endfor %}
                         </select>
                         <button type="submit"
                                 class="ml-2 px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">
                             Update
                         </button>
                     </form>
-                    {% endif %}
-                    </div>
-                </div>
-            </div>
-            <!-- Discussion Thread -->
-            <div class="p-4 border rounded-lg bg-white">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Discussion</h3>
-                <div class="space-y-3 mb-4">
-                    {% for m in req_messages %}
-                        {% comment %} Align current user's messages to the right {% endcomment %}
-                        {% if m.sender_id == user.id %}
-                            <div class="flex justify-end">
-                                <div class="max-w-[75%] px-3 py-2 rounded bg-indigo-600 text-white">
-                                    <div class="text-xs opacity-80 mb-1">You · {{ m.sent_at }}</div>
-                                    <div>{{ m.massges }}</div>
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="flex justify-start">
-                                <div class="max-w-[75%] px-3 py-2 rounded bg-gray-100 text-gray-800">
-                                    <div class="text-xs text-gray-500 mb-1">{{ m.sender.get_full_name|default:m.sender.email }} · {{ m.sent_at }}</div>
-                                    <div>{{ m.massges }}</div>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% empty %}
-                        <p class="text-gray-500">No messages yet.</p>
-                    {% endfor %}
-                </div>
-                {% if can_chat %}
-                    <form method="post"
-                          action="{% url 'request_app:add_massage' pk=request_obj.id %}"
-                          class="mt-4">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="send_message">
-                        {{ form.non_field_errors }}
-                        <div>
-                            {{ form.massges.errors }}
-                            {{ form.massges }}
-                        </div>
-                        <div class="mt-3">
-                            <button type="submit"
-                                    class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Send</button>
-                        </div>
-                    </form>
-                {% else %}
-                    <p class="text-sm text-gray-500">You don’t have permission to participate in this discussion.</p>
                 {% endif %}
+                <br/>
+                <a class='ml-2 px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700' href="{% url 'campaign:update' pk=request_obj.campaign.id %}?edit=false"> Campaign Details </a>
             </div>
         </div>
-    {% endblock content %}
-    {% block script %}
-    {% endblock script %}
+    </div>
+
+    <div class="p-4 border rounded-lg bg-white">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Discussion</h3>
+
+        <div class="space-y-3 mb-4">
+            {% for m in req_messages %}
+                {% if m.sender_id == user.id %}
+                    <div class="flex justify-end">
+                        <div class="max-w-[75%] px-3 py-2 rounded bg-indigo-600 text-white">
+                            <div class="text-xs opacity-80 mb-1">You · {{ m.sent_at|date:"M j, Y, g:i a" }}</div>
+                            <div>{{ m.message }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="flex justify-start">
+                        <div class="max-w-[75%] px-3 py-2 rounded bg-gray-100 text-gray-800">
+                            <div class="text-xs text-gray-500 mb-1">
+                                {{ m.sender.get_full_name|default:m.sender.email }} · {{ m.sent_at|date:"M j, Y, g:i a" }}
+                            </div>
+                            <div>{{ m.message }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p class="text-gray-500">No messages yet.</p>
+            {% endfor %}
+        </div>
+
+        {% if can_chat %}
+            <form method="post"
+                  action="{% url 'request_app:add_message' pk=request_obj.id %}"
+                  class="mt-4">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="send_message">
+                {{ form.non_field_errors }}
+                <div>
+                    {{ form.message.errors }}
+                    {{ form.message }}
+                </div>
+                <div class="mt-3">
+                    <button type="submit"
+                            class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">
+                        Send
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <p class="text-sm text-gray-500">You don’t have permission to participate in this discussion.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}{% endblock script %}

@@ -45,374 +45,408 @@
             {% if not is_edit %}disabled{% endif %}  {# NEW #}
             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500" />
             {% if form.title.errors %}<p class="text-red-500 text-sm mt-1">{{ form.title.errors|striptags }}</p>{% endif %}
-          </div>
-          <!-- Slug (Optional) -->
+        </div>
+        <!-- Slug (Optional) -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Slug (optional)</label>
+          <input type="text"
+            name="slug"
+            placeholder="Leave blank to auto-generate"
+            value="{{ form.slug.value|default_if_none:'' }}"
+            {% if not is_edit %}disabled{% endif %}  {# NEW #}
+            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+            <p class="text-sm text-gray-500 mt-1">If left blank, it will be generated from the title.</p>
+            {% if form.slug.errors %}<p class="text-red-500 text-sm mt-1">{{ form.slug.errors|striptags }}</p>{% endif %}
+        </div>
+        <!-- Short Description -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Short Description *</label>
+          <textarea name="short_description"
+                rows="3"
+                required
+                placeholder="Brief summary of the campaign (max 500 characters)"
+                {% if not is_edit %}disabled{% endif %}  {# NEW #}
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500">{{ form.short_description.value|default_if_none:'' }}</textarea>
+          {% if form.short_description.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.short_description.errors|striptags }}</p>
+          {% endif %}
+        </div>
+        <!-- Description -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Description *</label>
+          <textarea name="description"
+                rows="6"
+                required
+                placeholder="Detailed description of the campaign"
+                {% if not is_edit %}disabled{% endif %}  {# NEW #}
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500">{{ form.description.value|default_if_none:'' }}</textarea>
+          {% if form.description.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.description.errors|striptags }}</p>
+          {% endif %}
+        </div>
+        <!-- Category -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Category *</label>
+          {% with current=form.category.value|stringformat:"s" %}
+            <select name="category"
+              required
+              {% if not is_edit %}disabled{% endif %}  {# NEW: no readonly for select #}
+              class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-teal-500">
+              <option value="">---------</option>
+              {% for category in form.category.field.queryset %}
+                <option value="{{ category.id }}"
+                        {% if current == category.id|stringformat:"s" %}selected{% endif %}>
+                  {{ category.name }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if not is_edit %}
+              <!-- Preserve value when disabled -->
+              <input type="hidden" name="category" value="{{ current }}">
+            {% endif %}
+            {% if form.category.errors %}<p class="text-red-500 text-sm mt-1">{{ form.category.errors|striptags }}</p>{% endif %}
+          {% endwith %}
+        </div>
+          <!-- Tags -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Tags *</label>
+          <input type="text"
+                  name="tags"
+                  required
+                  placeholder="health, education, women"
+                  value="{{ form.tags.value|join:', ' }}"
+                  {% if not is_edit %}disabled{% endif %}
+                  class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+          {% if form.tags.errors %}<p class="text-red-500 text-sm mt-1">{{ form.tags.errors|striptags }}</p>{% endif %}
+        </div>
+        <!-- Cover Image -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Cover Image *</label>
+
+          {# Show current cover image preview if present #}
+          {% if form.instance and form.instance.cover_image %}
+            <div class="mb-3 flex items-center gap-4">
+              <img src="{{ form.instance.cover_image.url }}"
+                  alt="Cover image"
+                  class="h-24 w-24 object-cover rounded border" />
+            </div>
+          {% endif %}
+
+          <input type="file"
+                name="cover_image"
+                accept="image/*"
+                {% if not is_edit %}disabled{% endif %}
+                class="w-full border rounded-lg px-3 py-2" />
+          {% if form.cover_image.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.cover_image.errors|striptags }}</p>
+          {% endif %}
+          <p class="text-sm text-gray-500 mt-1">
+            For security, browsers won't retain a file selection on errors. Please reselect.
+          </p>
+        </div>
+          <!-- Dates -->
+        <div class="grid md:grid-cols-2 gap-6">
           <div>
-            <label class="block text-teal-800 font-medium mb-1">Slug (optional)</label>
-            <input type="text"
-              name="slug"
-              placeholder="Leave blank to auto-generate"
-              value="{{ form.slug.value|default_if_none:'' }}"
+            <label class="block text-teal-800 font-medium mb-1">Start Date &amp; Time * {{ form.start_date.value }}</label>
+            <input type="datetime-local"
+              name="start_date"
+              required
+              value="{{ form.start_date.value|date:'Y-m-d\TH:i' }}"
               {% if not is_edit %}disabled{% endif %}  {# NEW #}
               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-              <p class="text-sm text-gray-500 mt-1">If left blank, it will be generated from the title.</p>
-              {% if form.slug.errors %}<p class="text-red-500 text-sm mt-1">{{ form.slug.errors|striptags }}</p>{% endif %}
-            </div>
-            <!-- Short Description -->
-            <div>
-              <label class="block text-teal-800 font-medium mb-1">Short Description *</label>
-              <textarea name="short_description"
-                    rows="3"
-                    required
-                    placeholder="Brief summary of the campaign (max 500 characters)"
-                    {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500">{{ form.short_description.value|default_if_none:'' }}</textarea>
-              {% if form.short_description.errors %}
-                <p class="text-red-500 text-sm mt-1">{{ form.short_description.errors|striptags }}</p>
+              {% if form.start_date.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.start_date.errors|striptags }}</p>
               {% endif %}
-            </div>
-            <!-- Description -->
+          </div>
             <div>
-              <label class="block text-teal-800 font-medium mb-1">Description *</label>
-              <textarea name="description"
-                    rows="6"
-                    required
-                    placeholder="Detailed description of the campaign"
-                    {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500">{{ form.description.value|default_if_none:'' }}</textarea>
-              {% if form.description.errors %}
-                <p class="text-red-500 text-sm mt-1">{{ form.description.errors|striptags }}</p>
-              {% endif %}
-            </div>
-            <!-- Category -->
-            <div>
-              <label class="block text-teal-800 font-medium mb-1">Category *</label>
-              {% with current=form.category.value|stringformat:"s" %}
-                <select name="category"
-                  required
-                  {% if not is_edit %}disabled{% endif %}  {# NEW: no readonly for select #}
-                  class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-teal-500">
-                  <option value="">---------</option>
-                  {% for category in form.category.field.queryset %}
-                    <option value="{{ category.id }}"
-                            {% if current == category.id|stringformat:"s" %}selected{% endif %}>
-                      {{ category.name }}
-                    </option>
-                  {% endfor %}
-                </select>
-                {% if not is_edit %}
-                  <!-- Preserve value when disabled -->
-                  <input type="hidden" name="category" value="{{ current }}">
-                {% endif %}
-                {% if form.category.errors %}<p class="text-red-500 text-sm mt-1">{{ form.category.errors|striptags }}</p>{% endif %}
-              </div>
-              <!-- Tags -->
-              <div>
-                <label class="block text-teal-800 font-medium mb-1">Tags *</label>
-                <input type="text"
-                       name="tags"
-                       required
-                       placeholder="health, education, women"
-                       value="{{ form.tags.value|join:', ' }}"
-                       {% if not is_edit %}disabled{% endif %}
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-                {% if form.tags.errors %}<p class="text-red-500 text-sm mt-1">{{ form.tags.errors|striptags }}</p>{% endif %}
-              </div>
-              <!-- Cover Image -->
-              <div>
-                <label class="block text-teal-800 font-medium mb-1">Cover Image *</label>
-                {# Optional: show current image if form.instance has it #}
-                {% if form.instance and form.instance.cover_image %}
-                  <div class="mb-2 text-sm text-gray-600">Current: {{ form.instance.cover_image.url }}</div>
-                {% endif %}
-                <input type="file"
-                  name="cover_image"
-                  accept="image/*"
-                  value="{{ form.cover_image.value|default_if_none:'' }}"
-                  {% if not is_edit %}disabled{% endif %}  {# NEW: file inputs can’t be readonly #}
-                  class="w-full border rounded-lg px-3 py-2" />
-                  {% if form.cover_image.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ form.cover_image.errors|striptags }}</p>
-                  {% endif %}
-                  <p class="text-sm text-gray-500 mt-1">
-                    For security, browsers won't retain a file selection on errors. Please reselect.
-                  </p>
-                </div>
-                <!-- Dates -->
-                <div class="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label class="block text-teal-800 font-medium mb-1">Start Date &amp; Time * {{ form.start_date.value }}</label>
-                    <input type="datetime-local"
-                      name="start_date"
+              <label class="block text-teal-800 font-medium mb-1">End Date &amp; Time *</label>
+              <input type="datetime-local"
+                      name="end_date"
                       required
-                      value="{{ form.start_date.value|date:'Y-m-d\TH:i' }}"
-                      {% if not is_edit %}disabled{% endif %}  {# NEW #}
+                      value="{{ form.end_date.value|date:'Y-m-d\TH:i' }}"
+                      {% if not is_edit %}disabled{% endif %}
                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-                      {% if form.start_date.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.start_date.errors|striptags }}</p>
-                      {% endif %}
-                    </div>
-                    <div>
-                      <label class="block text-teal-800 font-medium mb-1">End Date &amp; Time *</label>
-                      <input type="datetime-local"
-                             name="end_date"
-                             required
-                             value="{{ form.end_date.value|date:'Y-m-d\TH:i' }}"
-                             {% if not is_edit %}disabled{% endif %}
-                             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-                      {% if form.end_date.errors %}<p class="text-red-500 text-sm mt-1">{{ form.end_date.errors|striptags }}</p>{% endif %}
-                    </div>
+              {% if form.end_date.errors %}<p class="text-red-500 text-sm mt-1">{{ form.end_date.errors|striptags }}</p>{% endif %}
+            </div>
+        </div>
+          <!-- Timezone -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-1">Timezone *</label>
+          {% with tzv=form.timezone_name.value|stringformat:"s" %}
+            <select name="timezone_name"
+              required
+              {% if not is_edit %}disabled{% endif %}  {# NEW #}
+              class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-teal-500">
+              <option value="Asia/Kolkata"
+                      {% if tzv == "Asia/Kolkata" or not tzv %}selected{% endif %}>
+                Asia/Kolkata (IST)
+              </option>
+              <option value="UTC" {% if tzv == "UTC" %}selected{% endif %}>UTC</option>
+              <option value="Asia/Dubai" {% if tzv == "Asia/Dubai" %}selected{% endif %}>Asia/Dubai</option>
+              <option value="Europe/London"
+                      {% if tzv == "Europe/London" %}selected{% endif %}>Europe/London</option>
+              <option value="America/New_York"
+                      {% if tzv == "America/New_York" %}selected{% endif %}>America/New_York</option>
+            </select>
+            {% if not is_edit %}
+              <input type="hidden"
+                      name="timezone_name"
+                      value="{{ tzv|default:'Asia/Kolkata' }}">
+            {% endif %}
+          {% endwith %}
+          {% if form.timezone_name.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.timezone_name.errors|striptags }}</p>
+          {% endif %}
+        </div>
+        <!-- Donation Amounts -->
+        <div class="grid md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Goal Amount *</label>
+            <input type="number"
+              step="0.01"
+              min="0"
+              name="goal_amount"
+              required
+              placeholder="Total target amount"
+              value="{{ form.goal_amount.value|default_if_none:'' }}"
+              {% if not is_edit %}disabled{% endif %}  {# NEW #}
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+              {% if form.goal_amount.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.goal_amount.errors|striptags }}</p>
+              {% endif %}
+          </div>
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Minimum Donation *</label>
+            <input type="number"
+              step="0.01"
+              min="0"
+              name="minimum_donation_amount"
+              required
+              placeholder="Minimum allowed"
+              value="{{ form.minimum_donation_amount.value|default_if_none:'' }}"
+              {% if not is_edit %}disabled{% endif %}  {# NEW #}
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+              {% if form.minimum_donation_amount.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.minimum_donation_amount.errors|striptags }}</p>
+              {% endif %}
+          </div>
+          <div>
+            <label class="block text-teal-800 font-medium mb-1">Maximum Donation *</label>
+            <input type="number"
+              step="0.01"
+              min="0"
+              name="maximum_donation_amount"
+              required
+              placeholder="Maximum allowed"
+              value="{{ form.maximum_donation_amount.value|default_if_none:'' }}"
+              {% if not is_edit %}disabled{% endif %}  {# NEW #}
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
+              {% if form.maximum_donation_amount.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.maximum_donation_amount.errors|striptags }}</p>
+              {% endif %}
+          </div>
+        </div>
+        <!-- Gallery -->
+        <div>
+          <label class="block text-teal-800 font-medium mb-2">Gallery Images *</label>
+          {# Bulk upload input #}
+          <input type="file"
+                name="gallery_bulk"
+                multiple
+                {% if not is_edit %}disabled{% endif %}
+                class="w-full border rounded-lg px-3 py-2" />
+          {% if form.gallery_bulk.errors %}
+            <p class="text-red-500 text-sm mt-1">{{ form.gallery_bulk.errors|striptags }}</p>
+          {% endif %}
+          <p class="text-sm text-gray-500 mt-1">Please reselect files after a validation error.</p>
+        </div>
+          <!-- Submit -->
+        {% if is_edit %}
+          <div class="text-center pt-6">
+            <button type="submit"
+              class="bg-teal-600 text-white px-10 py-3 rounded-lg hover:bg-teal-700 transition font-medium">
+              {% if form.instance.id %}
+              Update okok
+              {% else %}
+              Submit
+              {% endif %}
+            </button>
+          </div>
+        {% endif %}
+      </form>
+      <div>
+        <label class="block text-teal-800 font-medium mb-2">Gallery Images *</label>
+
+        {# Existing gallery items #}
+        {% if form.instance and form.instance.pk and form.instance.gallery.exists %}
+          <div class="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {% for img in form.instance.gallery.all %}
+              <div class="group border rounded-lg p-2">
+                <a href="{{ img.image.url }}" target="_blank" class="block">
+                  <img src="{{ img.image.url }}"
+                      alt="Gallery image {{ forloop.counter }}"
+                      class="h-28 w-full object-cover rounded" />
+                </a>
+
+                {% if is_edit %}
+                  <div class="mt-2 flex items-center gap-2">
+                    <!-- Delete image -->
+                    <form method="post"
+                          action="{% url 'campaign:gallery_delete' pk=img.id %}"
+                          onsubmit="return confirm('Delete this image permanently?');">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700">
+                        Delete
+                      </button>
+                    </form>
                   </div>
-                  <!-- Timezone -->
-                  <div>
-                    <label class="block text-teal-800 font-medium mb-1">Timezone *</label>
-                    {% with tzv=form.timezone_name.value|stringformat:"s" %}
-                      <select name="timezone_name"
-                        required
-                        {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                        class="w-full px-4 py-2 border rounded-lg bg-white focus:ring-2 focus:ring-teal-500">
-                        <option value="Asia/Kolkata"
-                                {% if tzv == "Asia/Kolkata" or not tzv %}selected{% endif %}>
-                          Asia/Kolkata (IST)
-                        </option>
-                        <option value="UTC" {% if tzv == "UTC" %}selected{% endif %}>UTC</option>
-                        <option value="Asia/Dubai" {% if tzv == "Asia/Dubai" %}selected{% endif %}>Asia/Dubai</option>
-                        <option value="Europe/London"
-                                {% if tzv == "Europe/London" %}selected{% endif %}>Europe/London</option>
-                        <option value="America/New_York"
-                                {% if tzv == "America/New_York" %}selected{% endif %}>America/New_York</option>
-                      </select>
-                      {% if not is_edit %}
-                        <input type="hidden"
-                               name="timezone_name"
-                               value="{{ tzv|default:'Asia/Kolkata' }}">
-                      {% endif %}
-                    {% endwith %}
-                    {% if form.timezone_name.errors %}
-                      <p class="text-red-500 text-sm mt-1">{{ form.timezone_name.errors|striptags }}</p>
-                    {% endif %}
-                  </div>
-                  <!-- Donation Amounts -->
-                  <div class="grid md:grid-cols-3 gap-6">
-                    <div>
-                      <label class="block text-teal-800 font-medium mb-1">Goal Amount *</label>
-                      <input type="number"
-                        step="0.01"
-                        min="0"
-                        name="goal_amount"
-                        required
-                        placeholder="Total target amount"
-                        value="{{ form.goal_amount.value|default_if_none:'' }}"
-                        {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-                        {% if form.goal_amount.errors %}
-                          <p class="text-red-500 text-sm mt-1">{{ form.goal_amount.errors|striptags }}</p>
-                        {% endif %}
-                      </div>
-                      <div>
-                        <label class="block text-teal-800 font-medium mb-1">Minimum Donation *</label>
-                        <input type="number"
-                          step="0.01"
-                          min="0"
-                          name="minimum_donation_amount"
-                          required
-                          placeholder="Minimum allowed"
-                          value="{{ form.minimum_donation_amount.value|default_if_none:'' }}"
-                          {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                          class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-                          {% if form.minimum_donation_amount.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.minimum_donation_amount.errors|striptags }}</p>
-                          {% endif %}
-                        </div>
-                        <div>
-                          <label class="block text-teal-800 font-medium mb-1">Maximum Donation *</label>
-                          <input type="number"
-                            step="0.01"
-                            min="0"
-                            name="maximum_donation_amount"
-                            required
-                            placeholder="Maximum allowed"
-                            value="{{ form.maximum_donation_amount.value|default_if_none:'' }}"
-                            {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
-                            {% if form.maximum_donation_amount.errors %}
-                              <p class="text-red-500 text-sm mt-1">{{ form.maximum_donation_amount.errors|striptags }}</p>
-                            {% endif %}
-                          </div>
-                        </div>
-                        <!-- Gallery -->
-                        <div>
-                          <label class="block text-teal-800 font-medium mb-1">Gallery Images *</label>
-                          {# Optional: show existing items if accessible via form.instance #}
-                          {% if form.instance and form.instance.gallery_images.all %}
-                            <div class="flex flex-wrap gap-3 mb-2 text-sm text-gray-600">
-                              {% for img in form.instance.gallery_images.all %}{{ img.image.url }}{% endfor %}
-                            </div>
-                          {% endif %}
-                          <input type="file"
-                            name="gallery_bulk"
-                            multiple
-                            {% if not is_edit %}disabled{% endif %}  {# NEW #}
-                            class="w-full border rounded-lg px-3 py-2" />
-                            {% if form.gallery_bulk.errors %}
-                              <p class="text-red-500 text-sm mt-1">{{ form.gallery_bulk.errors|striptags }}</p>
-                            {% endif %}
-                            <p class="text-sm text-gray-500 mt-1">Please reselect files after a validation error.</p>
-                          </div>
-                          <!-- Submit -->
-                           {% if is_edit %}
-                           <div class="text-center pt-6">
-                             <button type="submit"
-                             class="bg-teal-600 text-white px-10 py-3 rounded-lg hover:bg-teal-700 transition font-medium">
-                             {% if is_edit %}
-                             Update
-                             {% else %}
-                             Submit
-                             {% endif %}
-                            </button>
-                          </div>
-                          {% endif %}
-                        </form>
-                      </div>
-                    </div>
-                  {% endwith %}
-                {% endblock %}
-                {% block script %}
-                  <script>
-document.addEventListener("DOMContentLoaded", function () {
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-sm text-gray-500 mb-3">No gallery images yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-  const isEdit = {{ is_edit|yesno:"true,false" }}; // NEW
-  const form = document.getElementById("campaignForm");
+      const isEdit = {{ is_edit|yesno:"true,false" }}; // NEW
+      const form = document.getElementById("campaignForm");
 
-  const startDate = document.querySelector('[name="start_date"]');
-  const endDate = document.querySelector('[name="end_date"]');
-  const minAmount = document.querySelector('[name="minimum_donation_amount"]');
-  const maxAmount = document.querySelector('[name="maximum_donation_amount"]');
+      const startDate = document.querySelector('[name="start_date"]');
+      const endDate = document.querySelector('[name="end_date"]');
+      const minAmount = document.querySelector('[name="minimum_donation_amount"]');
+      const maxAmount = document.querySelector('[name="maximum_donation_amount"]');
 
-  /* ---------- Helper: error message ---------- */
-  function showError(input, message) {
-    let error = input?.parentElement?.querySelector?.(".js-error");
-    if (!error && input && input.parentElement) {
-      error = document.createElement("p");
-      error.className = "js-error text-red-500 text-sm mt-1";
-      input.parentElement.appendChild(error);
-    }
-    if (error) error.innerText = message;
-  }
-
-  function clearError(input) {
-    const error = input?.parentElement?.querySelector?.(".js-error");
-    if (error) error.remove();
-  }
-
-  /* View-only: hard-block submit */
-  if (!isEdit && form) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-    });
-  }
-
-  /* ---------- DATE VALIDATION ---------- */
-
-  // Set min start date = today
-  const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  const todayISO = now.toISOString().slice(0, 16);
-  if (startDate) startDate.min = todayISO;
-
-  if (startDate && endDate) {
-    if (!startDate.value) {
-      endDate.disabled = true;
-      endDate.value = "";
-    } else {
-      endDate.disabled = !isEdit ? true : false;
-      endDate.min = startDate.value;
-    }
-
-    startDate.addEventListener("input", function () {
-      if (!isEdit) return;
-      clearError(startDate);
-
-      if (!this.value) {
-        endDate.disabled = true;
-        endDate.value = "";
-        return;
+      /* ---------- Helper: error message ---------- */
+      function showError(input, message) {
+        let error = input?.parentElement?.querySelector?.(".js-error");
+        if (!error && input && input.parentElement) {
+          error = document.createElement("p");
+          error.className = "js-error text-red-500 text-sm mt-1";
+          input.parentElement.appendChild(error);
+        }
+        if (error) error.innerText = message;
       }
 
-      endDate.disabled = false;
-      endDate.min = this.value;
+      function clearError(input) {
+        const error = input?.parentElement?.querySelector?.(".js-error");
+        if (error) error.remove();
+      }
 
-      if (new Date(this.value) < new Date(todayISO)) {
-        showError(startDate, "Start date cannot be earlier than today.");
+      /* View-only: hard-block submit */
+      if (!isEdit && form) {
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+        });
+      }
+
+      /* ---------- DATE VALIDATION ---------- */
+
+      // Set min start date = today
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      const todayISO = now.toISOString().slice(0, 16);
+      if (startDate) startDate.min = todayISO;
+
+      if (startDate && endDate) {
+        if (!startDate.value) {
+          endDate.disabled = true;
+          endDate.value = "";
+        } else {
+          endDate.disabled = !isEdit ? true : false;
+          endDate.min = startDate.value;
+        }
+
+        startDate.addEventListener("input", function () {
+          if (!isEdit) return;
+          clearError(startDate);
+
+          if (!this.value) {
+            endDate.disabled = true;
+            endDate.value = "";
+            return;
+          }
+
+          endDate.disabled = false;
+          endDate.min = this.value;
+
+          if (new Date(this.value) < new Date(todayISO)) {
+            showError(startDate, "Start date cannot be earlier than today.");
+          }
+        });
+
+        endDate.addEventListener("input", function () {
+          if (!isEdit) return;
+          clearError(endDate);
+
+          if (!startDate.value) {
+            showError(endDate, "Please select a start date first.");
+            return;
+          }
+
+          if (new Date(this.value) < new Date(startDate.value)) {
+            showError(endDate, "End date must be after the start date.");
+          }
+        });
+      }
+
+      /* ---------- AMOUNT VALIDATION ---------- */
+
+      function validateAmounts() {
+        if (!isEdit) return;
+
+        clearError(minAmount);
+        clearError(maxAmount);
+
+        const minVal = parseFloat(minAmount?.value);
+        const maxVal = parseFloat(maxAmount?.value);
+
+        if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
+          showError(maxAmount, "Maximum amount cannot be less than minimum amount.");
+        }
+      }
+
+      if (minAmount) minAmount.addEventListener("input", validateAmounts);
+      if (maxAmount) maxAmount.addEventListener("input", validateAmounts);
+
+      /* ---------- FINAL SUBMIT CHECK ---------- */
+      if (form) {
+        form.addEventListener("submit", function (e) {
+          if (!isEdit) { e.preventDefault(); return; }
+
+          let hasError = false;
+
+          if (startDate && startDate.value && new Date(startDate.value) < new Date(todayISO)) {
+            showError(startDate, "Start date cannot be earlier than today.");
+            hasError = true;
+          }
+
+          if (startDate && endDate && startDate.value && endDate.value &&
+              new Date(endDate.value) < new Date(startDate.value)) {
+            showError(endDate, "End date must be after the start date.");
+            hasError = true;
+          }
+
+          const minVal = parseFloat(minAmount?.value);
+          const maxVal = parseFloat(maxAmount?.value);
+
+          if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
+            showError(maxAmount, "Maximum amount cannot be less than minimum amount.");
+            hasError = true;
+          }
+
+          if (hasError) {
+            e.preventDefault();
+          }
+        });
       }
     });
-
-    endDate.addEventListener("input", function () {
-      if (!isEdit) return;
-      clearError(endDate);
-
-      if (!startDate.value) {
-        showError(endDate, "Please select a start date first.");
-        return;
-      }
-
-      if (new Date(this.value) < new Date(startDate.value)) {
-        showError(endDate, "End date must be after the start date.");
-      }
-    });
-  }
-
-  /* ---------- AMOUNT VALIDATION ---------- */
-
-  function validateAmounts() {
-    if (!isEdit) return;
-
-    clearError(minAmount);
-    clearError(maxAmount);
-
-    const minVal = parseFloat(minAmount?.value);
-    const maxVal = parseFloat(maxAmount?.value);
-
-    if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
-      showError(maxAmount, "Maximum amount cannot be less than minimum amount.");
-    }
-  }
-
-  if (minAmount) minAmount.addEventListener("input", validateAmounts);
-  if (maxAmount) maxAmount.addEventListener("input", validateAmounts);
-
-  /* ---------- FINAL SUBMIT CHECK ---------- */
-  if (form) {
-    form.addEventListener("submit", function (e) {
-      if (!isEdit) { e.preventDefault(); return; }
-
-      let hasError = false;
-
-      if (startDate && startDate.value && new Date(startDate.value) < new Date(todayISO)) {
-        showError(startDate, "Start date cannot be earlier than today.");
-        hasError = true;
-      }
-
-      if (startDate && endDate && startDate.value && endDate.value &&
-          new Date(endDate.value) < new Date(startDate.value)) {
-        showError(endDate, "End date must be after the start date.");
-        hasError = true;
-      }
-
-      const minVal = parseFloat(minAmount?.value);
-      const maxVal = parseFloat(maxAmount?.value);
-
-      if (!isNaN(minVal) && !isNaN(maxVal) && maxVal < minVal) {
-        showError(maxAmount, "Maximum amount cannot be less than minimum amount.");
-        hasError = true;
-      }
-
-      if (hasError) {
-        e.preventDefault();
-      }
-    });
-  }
-
-});
-                  </script>
-                {% endblock %}
+  </script>
+{% endblock %}

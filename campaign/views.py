@@ -1,5 +1,5 @@
 from django.shortcuts import render,get_object_or_404
-from django.views.generic import View,ListView
+from django.views.generic import View,ListView,DeleteView
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.decorators import method_decorator
@@ -132,3 +132,10 @@ class CampaignListView(ListView):
         })
         context['RequestStatus']=RequestStatus
         return context
+
+@method_decorator(email_verification_required, name='dispatch')
+class CampaignGalaryImageDeleteView(DeleteView):
+    model = CampaignImages
+    
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER') or self.request.path

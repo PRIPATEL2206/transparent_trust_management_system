@@ -13,6 +13,9 @@ import os
 
 from request_app.models import Request
 
+from a_core.utils.storage import OverwriteStorage
+
+
 # -----------------------
 # Taxonomy / Supporting
 # -----------------------
@@ -56,6 +59,10 @@ class CampaignImages(models.Model):
         safe_filename = f"{base.strip().replace(' ', '_')}{ext}"
 
         return f"campaign/gallery/{instance.campaign.id}/{safe_filename}"
+    
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
 
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE, related_name='gallery')
     image = models.ImageField(upload_to=_get_image_url)
@@ -78,6 +85,7 @@ class Campaign(models.Model):
     tags = models.JSONField(default=list, blank=True)
     cover_image = models.ImageField(
         upload_to=_get_image_url,
+        storage=OverwriteStorage(),
         null=True,
         blank=True
     )
@@ -117,6 +125,10 @@ class Campaign(models.Model):
                 name="min_donation_non_negative",
             ),
         ]
+
+    def delete(self, *args, **kwargs):
+        self.cover_image.delete()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.title
