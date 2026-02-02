@@ -1,33 +1,38 @@
-from django.shortcuts import render
-from .form import CampaignForm
-from django.views.generic import View,ListView
-from .models import Campaign,CampaignImages,CampaignCategory
+from django.shortcuts import render,get_object_or_404
+from django.views.generic import View,ListView,DeleteView
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from account.decorators import email_verification_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
 from django.core.paginator import Paginator
 
 from request_app.models import RequestStatus
+from account.decorators import email_verification_required
+from a_core.views import CreateOrUpdateView
 
+from .models import Campaign,CampaignImages,CampaignCategory
+from .form import CampaignForm
 
 
 # Create your views here.
 @method_decorator(email_verification_required, name='dispatch')
-class CreateCampaignView(View):
+class CreateUpdateCampaignView(CreateOrUpdateView):
     template_name = "campaign/create.html"
+    model = Campaign
+    form_class = CampaignForm
+    fields = "__all__"
 
-    def get(self, request):
-        return render(request, self.template_name,{'form':CampaignForm()})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_edit']=self.request.GET.get('edit','true')=='true'
+        return context
 
-    def post(self, request):
-        form = CampaignForm(request.POST, request.FILES)
-        if form.is_valid():
-            campaign = form.save(request.user)
-            messages.success(request, "campais request sended successfully")
-
-        return render(request, self.template_name, {"form": form})
+    def form_valid(self, form):
+        if form.instance.id:
+            messages.success(self.request, "Campaign updated successfully")
+        else:
+            messages.success(self.request, "Campaign Created successfully")
+        return super().form_valid(form)
 
 @method_decorator(email_verification_required, name='dispatch')
 class CampaignListView(ListView):
@@ -94,11 +99,11 @@ class CampaignListView(ListView):
         """
         Dynamically determine page size with clamping: 1..100
         """
-        page_size = self.request.GET.get("page_size", "10")
+        page_size = self.request.GET.get("page_size", self.paginate_by)
         try:
             page_size = min(max(int(page_size), 1), 100)
         except ValueError:
-            page_size = 10
+            page_size = self.paginate_by
         return page_size
 
     def get_context_data(self, **kwargs):
@@ -127,3 +132,10 @@ class CampaignListView(ListView):
         })
         context['RequestStatus']=RequestStatus
         return context
+
+@method_decorator(email_verification_required, name='dispatch')
+class CampaignGalaryImageDeleteView(DeleteView):
+    model = CampaignImages
+    
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER') or self.request.path

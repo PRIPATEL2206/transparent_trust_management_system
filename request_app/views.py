@@ -44,7 +44,7 @@ class RequestMessageCreateView(CreateView):
     form_class = form.RequestMessageForm
 
     def post(self,request,pk,*args,**kwargs):  
-        requestMassge=models.RequestMessage.objects.create(sender=request.user,request=models.Request.objects.get(pk=pk),massges=request.POST.get('massges'))
+        requestMassge=models.RequestMessage.objects.create(sender=request.user,request=models.Request.objects.get(pk=pk),message=request.POST.get('message'))
         return redirect('request_app:detail',pk=pk)
 
 @method_decorator(email_verification_required, name='dispatch')
@@ -54,7 +54,6 @@ class RequestUpdateStatusView(UpdateView):
     http_method_names = ['post']
 
     def get_success_url(self):
-        print(self.request.path)
         return self.request.META.get('HTTP_REFERER') or self.request.path
     def post(self,request,*args,**kwargs):
         try:
@@ -159,7 +158,7 @@ class RequestListView(ListView):
         try:
             page_size = min(max(int(page_size), 1), 100)
         except ValueError:
-            page_size = 10
+            page_size = self.paginate_by
         return page_size
 
     def get_context_data(self, **kwargs):

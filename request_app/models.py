@@ -17,7 +17,7 @@ class RequestStatus(models.TextChoices):
 class RequestMessage(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,related_name="sent_messages")
     request=models.ForeignKey('Request', on_delete=models.CASCADE,related_name="messages")
-    massges = models.CharField(max_length=200)
+    message = models.CharField(max_length=200)
     sent_at = models.DateTimeField(auto_now_add=True)
 
 class Request(models.Model):
@@ -42,32 +42,34 @@ class Request(models.Model):
     def approve(self,user):
         if not self.can_approve(user):
             raise Exception("You don't have permission to approve this request")
-        RequestMessage.objects.create(request=self,sender=user,massges=f"{RequestStatus[self.status]} -> APPROVED")
+        RequestMessage.objects.create(request=self,sender=user,message=f"{RequestStatus[self.status]} -> APPROVED")
         self.status=RequestStatus.APPROVED
         self.reviewed_by=user
         self.save()
+        if hasattr(self,'request_obj') and hasattr(self.request_obj,'on_approve'):
+            self.request_obj.on_approve()
     def reject(self,user):
         if not self.can_approve(user):
             raise Exception("You don't have permission to reject this request")
-        RequestMessage.objects.create(request=self,sender=user,massges=f"{self.status} -> REJECTED")
+        RequestMessage.objects.create(request=self,sender=user,message=f"{self.status} -> REJECTED")
         self.status=RequestStatus.REJECTED
         self.save()
     def cancel(self,user):
         if not self.can_cancel(user):
             raise Exception("You don't have permission to cancel this request")
-        RequestMessage.objects.create(request=self,sender=user,massges=f"{self.status} -> CANCELED")
+        RequestMessage.objects.create(request=self,sender=user,message=f"{self.status} -> CANCELED")
         self.status=RequestStatus.CANCELED
         self.save()
     def send_for_review(self,user):
         if not self.can_send_for_review(user):
             raise Exception("You don't have permission to send this request for review")
-        RequestMessage.objects.create(request=self,sender=user,massges=f"{self.status} -> PENDING_REVIEW")
+        RequestMessage.objects.create(request=self,sender=user,message=f"{self.status} -> PENDING_REVIEW")
         self.status=RequestStatus.PENDING_REVIEW
         self.save()
     def send_for_draft(self,user):
         if not self.can_draft(user):
             raise Exception("You don't have permission to send this request to draft")
-        RequestMessage.objects.create(request=self,sender=user,massges=f"{self.status} -> DRAFT")
+        RequestMessage.objects.create(request=self,sender=user,message=f"{self.status} -> DRAFT")
         self.status=RequestStatus.DRAFT
         self.save()
     

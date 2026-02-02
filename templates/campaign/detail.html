@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="grid md:grid-cols-3 gap-8">
+    <!-- Main -->
+    <div class="md:col-span-2">
+      {% if campaign.cover_image %}
+        <img src="{{ campaign.cover_image.url }}" alt="{{ campaign.title }}" class="w-full h-64 object-cover rounded-lg shadow mb-4">
+      {% endif %}
+
+      <h1 class="text-2xl font-bold text-teal-800 mb-2">{{ campaign.title }}</h1>
+
+      <div class="text-gray-600 mb-4">
+        <p>{{ campaign.short_description }}</p>
+      </div>
+
+      <div class="prose max-w-none">
+        {{ campaign.description|linebreaks }}
+      </div>
+
+      {% if campaign.gallery.all %}
+        <h2 class="mt-8 mb-3 font-semibold text-teal-800">Gallery</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {% for img in campaign.gallery.all %}
+            <a href="{{ img.image.url }}" target="_blank" class="block">
+              <img src="{{ img.image.url }}" class="w-full h-28 object-cover rounded border" alt="Gallery {{ forloop.counter }}">
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar: Stats + Donate -->
+    <aside>
+      <div class="bg-white rounded-lg shadow p-4">
+        <div class="mb-2">
+          {% if campaign.goal_amount %}
+            <div class="w-full bg-gray-200 h-2 rounded">
+              <div class="bg-teal-600 h-2 rounded" style="width: {% widthratio campaign.amount_raised campaign.goal_amount 100 %}%"></div>
+            </div>
+            <div class="flex justify-between text-sm mt-1">
+              <span>Raised: {{ campaign.amount_raised }}</span>
+              <span>Goal: {{ campaign.goal_amount }}</span>
+            </div>
+          {% else %}
+            <div class="text-sm">Raised: {{ campaign.amount_raised }}</div>
+          {% endif %}
+          <div class="text-xs text-gray-500 mt-1">Donors: {{ campaign.donations_count }}</div>
+          <div class="text-xs text-gray-500 mt-1">
+            Start: {{ campaign.start_date|date:"M d, Y" }}
+            {% if campaign.end_date %} • End: {{ campaign.end_date|date:"M d, Y" }}{% endif %}
+          </div>
+          {% if campaign.category %}
+            <div class="text-xs mt-1">
+              Category: <span class="px-2 py-0.5 bg-teal-50 text-teal-700 rounded">{{ campaign.category.name }}</span>
+            </div>
+          {% endif %}
+          {% if campaign.tags %}
+            <div class="text-xs text-gray-600 mt-2">
+              Tags:
+              {% for t in campaign.tags %}
+                <span class="px-2 py-0.5 bg-gray-100 rounded mr-1">{{ t }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <hr class="my-3">
+
+        {% if request.GET.thanks %}
+          <div class="p-2 rounded bg-green-50 text-green-700 text-sm mb-3">Thank you for your donation!</div>
+        {% endif %}
+
+        <form method="post" action="{% url 'donation_app:campaign_donate' slug=campaign.slug %}" class="space-y-3">
+          {% csrf_token %}
+          {{ donation_form.non_field_errors }}
+          <div>
+            <label class="text-sm font-medium">Amount</label>
+            {{ donation_form.amount }}
+            {{ donation_form.amount.errors }}
+            {% if campaign.minimum_donation_amount or campaign.maximum_donation_amount %}
+              <p class="text-xs text-gray-500 mt-1">
+                {% if campaign.minimum_donation_amount %}Min {{ campaign.minimum_donation_amount }}{% endif %}
+                {% if campaign.minimum_donation_amount and campaign.maximum_donation_amount %} • {% endif %}
+                {% if campaign.maximum_donation_amount %}Max {{ campaign.maximum_donation_amount }}{% endif %}
+              </p>
+            {% endif %}
+          </div>
+          <div>
+            <label class="text-sm font-medium">Currency</label>
+            {{ donation_form.currency }}
+            {{ donation_form.currency.errors }}
+          </div>
+          <div>
+            <label class="text-sm font-medium">Public Name (optional)</label>
+            {{ donation_form.donor_display_name }}
+            {{ donation_form.donor_display_name.errors }}
+          </div>
+          <div>
+            <label class="text-sm font-medium">Message (optional)</label>
+            {{ donation_form.description}}
+            {{ donation_form.description.errors }}
+          </div>
+          <button type="submit" class="w-full bg-teal-600 text-white rounded px-4 py-2 hover:bg-teal-700">
+            Donate
+          </button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

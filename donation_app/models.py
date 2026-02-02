@@ -42,7 +42,7 @@ class Donation(models.Model):
 
     def clean(self):
         # enforce min/max per campaign
-        if self.campaign:
+        if hasattr(self, "campaign"):
             min_amt = self.campaign.minimum_donation_amount or Decimal("0.00")
             max_amt = self.campaign.maximum_donation_amount
             if self.amount < min_amt:
