@@ -146,7 +146,7 @@ class ProfileUpdateView(View):
                 setattr(user, field, request.POST.get(field))
         
         if 'remove_profile_image' in request.POST:
-            user.profile_image = None
+            user.profile_image.delete()
         elif 'profile_image' in request.FILES:
             user.profile_image = request.FILES['profile_image']
             

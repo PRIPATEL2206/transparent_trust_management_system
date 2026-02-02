@@ -95,7 +95,7 @@ class Campaign(models.Model):
     # Governance & workflow
     visibility = models.CharField(max_length=10, choices=Visibility.choices, default=Visibility.PRIVATE)
     
-    request=models.OneToOneField(Request, on_delete=models.DO_NOTHING,related_name="campaign")
+    request=models.OneToOneField(Request, on_delete=models.DO_NOTHING,related_name="request_obj")
     
 
     # Dates & duration
@@ -142,6 +142,17 @@ class Campaign(models.Model):
     def status(self):
         return self.request.status
     
+    @property
+    def get_slug(self):
+        return self.slug
+    @property
+    def get_title(self):
+        return self.title
+        
+    @property
+    def get_short_description(self):
+        return self.short_description
+        
     def get_absolute_url(self):
         return reverse('campaign:detail', kwargs={'slug': self.slug})
 
@@ -192,79 +203,6 @@ class Campaign(models.Model):
         self.clean()
         super().save(*args, **kwargs)
 
-    # -----------------------
-    # State transitions
-    # -----------------------
-    @transaction.atomic
-    def submit_for_review(self, user):
-        if self.status != CampaignStatus.DRAFT:
-            raise ValueError("Only DRAFT campaigns can be submitted for review.")
-        if user != self.proposed_by and not user.is_staff:
-            raise PermissionError("Only proposer or admin can submit for review.")
-        old = self.status
-        self.status = CampaignStatus.PENDING_REVIEW
-        self.review_notes = ""
-        self.reviewed_by = None
-        self.approval_date = None
-        self.save()
-
-    @transaction.atomic
-    def review(self, admin_user, decision: str, notes: str = ""):
-        if not getattr(admin_user, "is_staff", False):
-            raise PermissionError("Only admins can review campaigns.")
-        if self.status != CampaignStatus.PENDING_REVIEW:
-            raise ValueError("Only campaigns in PENDING_REVIEW can be reviewed.")
-
-        decision = decision.upper()
-        if decision not in (CampaignStatus.APPROVED, CampaignStatus.REJECTED):
-            raise ValueError("Decision must be APPROVED or REJECTED.")
-
-        old = self.status
-        self.reviewed_by = admin_user
-        self.review_notes = notes or ""
-        if decision == CampaignStatus.APPROVED:
-            self.status = CampaignStatus.APPROVED
-            self.approval_date = timezone.now()
-            # Auto publish if window is active
-            if self.is_in_active_window and self.visibility == Visibility.PUBLIC:
-                self.status = CampaignStatus.ACTIVE
-                self.published_at = timezone.now()
-        else:
-            self.status = CampaignStatus.REJECTED
-            self.approval_date = None
-
-        self.save()
-
-    @transaction.atomic
-    def activate_if_ready(self, admin_user=None):
-        """
-        Move APPROVED -> ACTIVE when start_date arrives.
-        Can be called by a cron or admin action.
-        """
-        if self.status in (CampaignStatus.APPROVED, CampaignStatus.CANCEL):
-            if self.is_in_active_window:
-                old = self.status
-                self.status = CampaignStatus.ACTIVE
-                self.published_at = self.published_at or timezone.now()
-                self.save()
-
-    @transaction.atomic
-    def pause(self, admin_user, reason: str = ""):
-        if not getattr(admin_user, "is_staff", False):
-            raise PermissionError("Only admins can pause Campaigns.")
-        if self.status != CampaignStatus.ACTIVE:
-            raise ValueError("Only ACTIVE Campaigns can be paused.")
-        old = self.status
-        self.status = CampaignStatus.CANCEL
-        self.save()
-
-    @transaction.atomic
-    def archive(self, admin_user, reason: str = ""):
-        if not getattr(admin_user, "is_staff", False):
-            raise PermissionError("Only admins can archive Campaigns.")
-        if self.status in (CampaignStatus.ARCHIVED, CampaignStatus.REJECTED):
-            raise ValueError("Cannot archive already archived or rejected Campaigns.")
-        old = self.status
-        self.status = CampaignStatus.ARCHIVED
-        self.archived_at = timezone.now()
+    def on_approve(self):
+        self.visibility=Visibility.PUBLIC
         self.save()

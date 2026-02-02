@@ -46,6 +46,8 @@ class Request(models.Model):
         self.status=RequestStatus.APPROVED
         self.reviewed_by=user
         self.save()
+        if hasattr(self,'request_obj') and hasattr(self.request_obj,'on_approve'):
+            self.request_obj.on_approve()
     def reject(self,user):
         if not self.can_approve(user):
             raise Exception("You don't have permission to reject this request")

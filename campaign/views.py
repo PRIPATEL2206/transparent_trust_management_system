@@ -99,11 +99,11 @@ class CampaignListView(ListView):
         """
         Dynamically determine page size with clamping: 1..100
         """
-        page_size = self.request.GET.get("page_size", "10")
+        page_size = self.request.GET.get("page_size", self.paginate_by)
         try:
             page_size = min(max(int(page_size), 1), 100)
         except ValueError:
-            page_size = 10
+            page_size = self.paginate_by
         return page_size
 
     def get_context_data(self, **kwargs):

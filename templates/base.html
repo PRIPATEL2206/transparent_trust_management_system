@@ -20,24 +20,23 @@
 
             <nav class="hidden md:flex space-x-6 items-center"
                 style="@media (min-width: 768px) { display: flex !important; }">
-                <a href="/about/" class="text-white hover:text-teal-200">About Trust</a>
+                <a href="{% url 'home' %}" class="text-white hover:text-teal-200">About Trust</a>
                 <a href="/contact/" class="text-white hover:text-teal-200">Contact</a>
-                <a href="{% url 'campaign:public_list' %}" class="text-white hover:text-teal-200">Public Campaign</a>
-                <a href="{% url 'campaign:list' %}" class="text-white hover:text-teal-200">Campaign</a>
-                <a href="{% url 'request_app:list' %}?status=PENDING_REVIEW" class="text-white hover:text-teal-200">Request</a>
-                <a href="/membership/join/" class="text-white hover:text-teal-200">Join Trust</a>
-                <a href="/donations/public/" class="text-white hover:text-teal-200">Public Donations</a>
+                <a href="{% url 'campaign:public_list' %}" class="text-white hover:text-teal-200">Donate</a>
+                {% if not request.user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="text-white hover:text-teal-200">Join Trust</a>
+                {% endif %}
 
                 <div class="relative group z-40">
                     <button class="flex items-center text-white hover:text-teal-200">
-                        More
+                        Actions
                         <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="absolute hidden group-hover:block bg-white shadow-md mt-2 rounded-md py-2 w-40">
-                        <a href="#" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Extra Link 1</a>
-                        <a href="#" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Extra Link 2</a>
+                    <div class="absolute hidden group-hover:block bg-white shadow-md mt-1 rounded-md py-2 w-40">
+                        <a href="{% url 'campaign:list' %}" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Campaign</a>
+                        <a href="{% url 'request_app:list' %}?status=PENDING_REVIEW" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Request</a>
                     </div>
                 </div>
             </nav>

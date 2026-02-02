@@ -158,7 +158,7 @@ class RequestListView(ListView):
         try:
             page_size = min(max(int(page_size), 1), 100)
         except ValueError:
-            page_size = 10
+            page_size = self.paginate_by
         return page_size
 
     def get_context_data(self, **kwargs):
