@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+  <!-- Filters -->
+  <form method="get" class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search campaigns..."
+           class="px-3 py-2 border rounded w-full" />
+
+    <select name="category" class="px-3 py-2 border rounded w-full">
+      <option value="">All categories</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if selected_category == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <select name="sort" class="px-3 py-2 border rounded w-full">
+      <option value="">Sort by (default: Newest)</option>
+      <option value="new" {% if sort == 'new' %}selected{% endif %}>Newest</option>
+      <option value="end_soon" {% if sort == 'end_soon' %}selected{% endif %}>Ending Soon</option>
+      <option value="goal_high" {% if sort == 'goal_high' %}selected{% endif %}>Goal: High → Low</option>
+      <option value="goal_low" {% if sort == 'goal_low' %}selected{% endif %}>Goal: Low → High</option>
+      <option value="raised_high" {% if sort == 'raised_high' %}selected{% endif %}>Raised: High → Low</option>
+      <option value="raised_low" {% if sort == 'raised_low' %}selected{% endif %}>Raised: Low → High</option>
+      <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Most Donors</option>
+      <option value="title_az" {% if sort == 'title_az' %}selected{% endif %}>Title A → Z</option>
+      <option value="title_za" {% if sort == 'title_za' %}selected{% endif %}>Title Z → A</option>
+    </select>
+
+    <button type="submit" class="bg-teal-600 text-white rounded px-4 py-2">Apply</button>
+  </form>
+
+  <!-- Card Grid -->
+  <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    {% for c in campaigns %}
+      <a href="{{ c.get_absolute_url }}" class="block bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition">
+        {% if c.cover_image %}
+          <img src="{{ c.cover_image.url }}" class="w-full h-44 object-cover" alt="{{ c.title }}">
+        {% else %}
+          <div class="w-full h-44 bg-gray-100 flex items-center justify-center text-gray-400">No Image</div>
+        {% endif %}
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="font-semibold text-teal-800 line-clamp-1">{{ c.title }}</h3>
+            {% if c.category %}<span class="text-xs bg-teal-50 text-teal-700 px-2 py-0.5 rounded">{{ c.category.name }}</span>{% endif %}
+          </div>
+          <p class="text-sm text-gray-600 line-clamp-2 mb-3">{{ c.short_description }}</p>
+
+          {% with raised=c.amount_raised goal=c.goal_amount %}
+            <div class="mb-2">
+              {% with pct=0 %}
+                {% if goal %}
+                  {% with pct=raised|divisibleby:goal %}
+                  {% endwith %}
+                {% endif %}
+              {% endwith %}
+              {% if goal %}
+                {% with percent=raised|floatformat:2 %}
+                {% endwith %}
+                <div class="w-full bg-gray-200 h-2 rounded">
+                  <div class="bg-teal-600 h-2 rounded" style="width: {% widthratio raised goal 100 %}%"></div>
+                </div>
+                <div class="flex justify-between text-xs mt-1 text-gray-600">
+                  <span>Raised: {{ raised }}</span>
+                  <span>Goal: {{ goal }}</span>
+                </div>
+              {% else %}
+                <div class="text-xs text-gray-500">Raised: {{ raised }}</div>
+              {% endif %}
+            </div>
+          {% endwith %}
+
+          <div class="flex items-center justify-between text-xs text-gray-500">
+            <span>Donors: {{ c.donations_count }}</span>
+            <span>
+              Start: {{ c.start_date|date:"M d, Y" }}
+              {% if c.end_date %} • End: {{ c.end_date|date:"M d, Y" }}{% endif %}
+            </span>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <p class="col-span-full text-center text-gray-500">No campaigns found.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+    <div class="flex items-center justify-center gap-2 mt-8">
+      {% if page_obj.has_previous %}
+        <a class="px-3 py-1 border rounded" href="?page={{ page_obj.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">&larr; Prev</a>
+      {% else %}
+        <span class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">&larr; Prev</span>
+      {% endif %}
+
+      <span class="px-3 py-1">Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+        <a class="px-3 py-1 border rounded" href="?page={{ page_obj.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">Next &rarr;</a>
+      {% else %}
+        <span class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">Next &rarr;</span>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

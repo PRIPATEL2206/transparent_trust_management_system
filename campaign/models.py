@@ -3,6 +3,7 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Optional
 
+from django.urls import reverse
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -59,13 +60,13 @@ class CampaignImages(models.Model):
         safe_filename = f"{base.strip().replace(' ', '_')}{ext}"
 
         return f"campaign/gallery/{instance.campaign.id}/{safe_filename}"
-    
-    def delete(self, *args, **kwargs):
-        self.image.delete()
-        super().delete(*args, **kwargs)
 
     campaign = models.ForeignKey('Campaign', on_delete=models.CASCADE, related_name='gallery')
     image = models.ImageField(upload_to=_get_image_url)
+
+    def delete(self, *args, **kwargs):
+        self.image.delete()
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return f'{self.campaign.title} - {self.image}'
@@ -140,11 +141,25 @@ class Campaign(models.Model):
     @property
     def status(self):
         return self.request.status
+    
+    def get_absolute_url(self):
+        return reverse('campaign:detail', kwargs={'slug': self.slug})
 
     @property
     def amount_raised(self) -> Decimal:
-        total = self.donations.aggregate(total=Sum("amount")).get("total")
-        return total or Decimal("0.00")
+        cached = getattr(self, "_amount_raised", None)
+        if cached is not None:
+            return cached
+        # Fallback compute
+        return self.donations.aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
+    
+    @property
+    def donations_count(self) -> int:
+        cached = getattr(self, "_donations_count", None)
+        if cached is not None:
+            return cached
+        return self.donations.count()
+
 
     @property
     def donor_count(self) -> int:

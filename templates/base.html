@@ -22,6 +22,7 @@
                 style="@media (min-width: 768px) { display: flex !important; }">
                 <a href="/about/" class="text-white hover:text-teal-200">About Trust</a>
                 <a href="/contact/" class="text-white hover:text-teal-200">Contact</a>
+                <a href="{% url 'campaign:public_list' %}" class="text-white hover:text-teal-200">Public Campaign</a>
                 <a href="{% url 'campaign:list' %}" class="text-white hover:text-teal-200">Campaign</a>
                 <a href="{% url 'request_app:list' %}?status=PENDING_REVIEW" class="text-white hover:text-teal-200">Request</a>
                 <a href="/membership/join/" class="text-white hover:text-teal-200">Join Trust</a>

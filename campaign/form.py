@@ -23,7 +23,6 @@ class CommaSeparatedTagsField(forms.CharField):
         parts = [p.strip() for p in str(value).split(",")]
         return [p for p in parts if p]
 
-
 class MultiFileInput(forms.ClearableFileInput):
         allow_multiple_selected = True
 
