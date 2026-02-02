@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
   <div class="flex justify-center px-4 py-10">
     <div class="w-full max-w-3xl bg-white shadow-lg rounded-xl p-8">
@@ -311,7 +311,7 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}
 {% block script %}
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -449,4 +449,4 @@
       }
     });
   </script>
-{% endblock %}
+{% endblock script %}

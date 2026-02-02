@@ -12,9 +12,8 @@
                 Sign in to access your Trust account
             </p>
 
-            <form method="post" action="{% url 'login'  %}" novalidate>
+            <form method="post" action="{% url 'login' %}" novalidate>
                 {% csrf_token %}
-
                 <div class="mb-4">
                     <label class="block text-gray-700 font-medium mb-1">
                         Email Address
@@ -25,7 +24,6 @@
                         Please enter a valid email address.
                     </p>
                 </div>
-
 
                 <div class="mb-2">
                     <label class="block text-gray-700 font-medium mb-1">

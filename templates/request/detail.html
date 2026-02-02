@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -132,7 +132,7 @@
                 {% endif %}
                 <br/>
                 {% if request_obj.requested_for == 'CAMPAIGN' %}
-                    <a class='ml-2 px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700' href="{% url 'campaign:update' pk=request_obj.request_obj.id %}?edit=false"> Campaign Details </a>
+                    <a class="ml-2 px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700" href="{% url 'campaign:update' pk=request_obj.request_obj.id %}?edit=false"> Campaign Details </a>
                 {% endif %}
             </div>
         </div>

@@ -2,171 +2,171 @@
 
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="A comprehensive guide to growing healthy tomatoes in your backyard. Learn about soil preparation, planting techniques, and common pest control methods.">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Trust Management System{% endblock %}</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Trust Management System{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
+    <body class="bg-teal-50 font-sans flex flex-col min-h-screen">
 
-<body class="bg-teal-50 font-sans flex flex-col min-h-screen">
+        <!-- ================= HEADER ================= -->
+        <header class="bg-teal-800 shadow-md z-50">
+            <div class="container mx-auto flex items-center justify-between px-4 py-4">
 
-    <!-- ================= HEADER ================= -->
-    <header class="bg-teal-800 shadow-md z-50">
-        <div class="container mx-auto flex items-center justify-between px-4 py-4">
+                <div class="text-2xl font-bold text-white">TMS</div>
 
-            <div class="text-2xl font-bold text-white">TMS</div>
+                <nav class="hidden md:flex space-x-6 items-center"
+                    style="@media (min-width: 768px) { display: flex !important; }">
+                    <a href="{% url 'home' %}" class="text-white hover:text-teal-200">About Trust</a>
+                    <a href="/contact/" class="text-white hover:text-teal-200">Contact</a>
+                    <a href="{% url 'campaign:public_list' %}" class="text-white hover:text-teal-200">Donate</a>
+                    {% if not request.user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="text-white hover:text-teal-200">Join Trust</a>
+                    {% endif %}
 
-            <nav class="hidden md:flex space-x-6 items-center"
-                style="@media (min-width: 768px) { display: flex !important; }">
-                <a href="{% url 'home' %}" class="text-white hover:text-teal-200">About Trust</a>
-                <a href="/contact/" class="text-white hover:text-teal-200">Contact</a>
-                <a href="{% url 'campaign:public_list' %}" class="text-white hover:text-teal-200">Donate</a>
-                {% if not request.user.is_authenticated %}
-                    <a href="{% url 'register' %}" class="text-white hover:text-teal-200">Join Trust</a>
+                    <div class="relative group z-40">
+                        <button class="flex items-center text-white hover:text-teal-200">
+                            Actions
+                            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="absolute hidden group-hover:block bg-white shadow-md mt-1 rounded-md py-2 w-40">
+                            <a href="{% url 'campaign:list' %}" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Campaign</a>
+                            <a href="{% url 'request_app:list' %}?status=PENDING_REVIEW" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Request</a>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if request.user.is_authenticated %}
+
+                        <!-- Avatar -->
+                        <a href="{% url 'profile' %}" class="w-10 h-10 block">
+                        {% if request.user.profile_image %}
+                            <img
+                            src="{{ request.user.profile_image.url }}"
+                            class="w-10 h-10 rounded-full object-cover border-2 border-teal-600"
+                            alt="Avatar"
+                            >
+                        {% else %}
+                            <div
+                            class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
+                            {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                        </a>
+
+                        <!-- Logout -->
+                        <a href="{% url 'logout' %}"
+                        class="bg-teal-600 text-white px-5 py-2 rounded-lg hover:bg-teal-700 transition">
+                            Logout
+                        </a>
+
+                    {% else %}
+                        <a href="{% url 'login' %}"
+                        class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition">
+                            Login
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="md:hidden flex items-center space-x-3">
+                {% if request.user.is_authenticated %}
+                <!-- Mobile Avatar (Always Visible) -->
+                <a href="{% url 'profile' %}" class="w-10 h-10 block">
+                {% if request.user.profile_image %}
+                    <img
+                    src="{{ request.user.profile_image.url }}"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-teal-600"
+                    alt="Avatar"
+                    >
+                {% else %}
+                    <div
+                    class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
+                    {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+                </a>
+
                 {% endif %}
 
-                <div class="relative group z-40">
-                    <button class="flex items-center text-white hover:text-teal-200">
-                        Actions
-                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="absolute hidden group-hover:block bg-white shadow-md mt-1 rounded-md py-2 w-40">
-                        <a href="{% url 'campaign:list' %}" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Campaign</a>
-                        <a href="{% url 'request_app:list' %}?status=PENDING_REVIEW" class="block px-4 py-2 text-teal-600 hover:bg-teal-100">Request</a>
-                    </div>
-                </div>
-            </nav>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
 
-            <div class="hidden md:flex items-center space-x-4">
+            </div>
+
+            <div id="mobile-menu" class="hidden md:hidden bg-teal-700">
+                <a href="/about/" class="block px-4 py-2 text-white hover:bg-teal-800">About Trust</a>
+                <a href="/contact/" class="block px-4 py-2 text-white hover:bg-teal-800">Contact</a>
+                <a href="/membership/" class="block px-4 py-2 text-white hover:bg-teal-800">Membership Plans</a>
+                <a href="/membership/join/" class="block px-4 py-2 text-white hover:bg-teal-800">Join Trust</a>
+                <a href="/donations/public/" class="block px-4 py-2 text-white hover:bg-teal-800">Public Donations</a>
                 {% if request.user.is_authenticated %}
-
-                    <!-- Avatar -->
-                    <a href="{% url 'profile' %}" class="w-10 h-10 block">
-                    {% if request.user.profile_image %}
-                        <img
-                        src="{{ request.user.profile_image.url }}"
-                        class="w-10 h-10 rounded-full object-cover border-2 border-teal-600"
-                        alt="Avatar"
-                        >
-                    {% else %}
-                        <div
-                        class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
-                        {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
-                        </div>
-                    {% endif %}
-                    </a>
-
-                    <!-- Logout -->
-                    <a href="{% url 'logout' %}"
-                    class="bg-teal-600 text-white px-5 py-2 rounded-lg hover:bg-teal-700 transition">
+                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-teal-800">
                         Logout
                     </a>
-
                 {% else %}
-                    <a href="{% url 'login' %}"
-                    class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition">
+                    <a href="{% url 'login' %}" class="block px-4 py-2 text-white hover:bg-teal-800">
                         Login
                     </a>
                 {% endif %}
+
             </div>
+        </header>
 
-            <div class="md:hidden flex items-center space-x-3">
-            {% if request.user.is_authenticated %}
-            <!-- Mobile Avatar (Always Visible) -->
-            <a href="{% url 'profile' %}" class="w-10 h-10 block">
-            {% if request.user.profile_image %}
-                <img
-                src="{{ request.user.profile_image.url }}"
-                class="w-10 h-10 rounded-full object-cover border-2 border-teal-600"
-                alt="Avatar"
-                >
-            {% else %}
-                <div
-                class="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
-                {{ request.user.first_name|default:request.user.email|slice:":1"|upper }}
-                </div>
-            {% endif %}
-            </a>
+        <!-- ================= PAGE CONTENT ================= -->
+        <main class="min-h-screen">
+            {% block content %}{% endblock content %}
+        </main>
+        <!-- ================= FOOTER ================= -->
+        <footer class="bg-teal-800 text-white py-4 text-center">
+            &copy; 2026 Trust Management System. All rights reserved.
+        </footer>
 
-            {% endif %}
-
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
+        <!-- ================= TOAST NOTIFICATION ================= -->
+        {% if messages %}
+        <div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-full flex justify-center">
+            {% for message in messages %}
+            <div class="toast-message transition-opacity {% if message.tags == 'success' %} bg-green-300 {% elif message.tags == 'error' %} bg-red-300 {% endif %}text-white p-3 rounded-lg shadow-md min-w-56 text-center mb-3">
+                {{ message }}
+                {% comment %} <p class='bg-red-600 text-black'> {{ message.tags }} </p> {% endcomment %}
+            </div>
+            {% endfor %}
         </div>
+        {% endif %}
 
-        </div>
+        {% block script %}{% endblock script %}
+        <!-- ================= MOBILE MENU TOGGLE SCRIPT ================= -->
+        <script>
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        </script>
+        <!-- ================= TOAST DISMISSAL SCRIPT ================= -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                setTimeout(function () {
+                    const toastMessages = document.querySelectorAll('.toast-message');
+                    toastMessages.forEach(toast => {
+                        toast.classList.add('opacity-0');
+                        setTimeout(() => toast.remove(), 300); // Remove after fade-out
+                    });
+                }, 3000); // 3 seconds timeout for the toast to disappear
+            });
+        </script>
 
-        <div id="mobile-menu" class="hidden md:hidden bg-teal-700">
-            <a href="/about/" class="block px-4 py-2 text-white hover:bg-teal-800">About Trust</a>
-            <a href="/contact/" class="block px-4 py-2 text-white hover:bg-teal-800">Contact</a>
-            <a href="/membership/" class="block px-4 py-2 text-white hover:bg-teal-800">Membership Plans</a>
-            <a href="/membership/join/" class="block px-4 py-2 text-white hover:bg-teal-800">Join Trust</a>
-            <a href="/donations/public/" class="block px-4 py-2 text-white hover:bg-teal-800">Public Donations</a>
-            {% if request.user.is_authenticated %}
-                <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-teal-800">
-                    Logout
-                </a>
-            {% else %}
-                <a href="{% url 'login' %}" class="block px-4 py-2 text-white hover:bg-teal-800">
-                    Login
-                </a>
-            {% endif %}
-
-        </div>
-    </header>
-
-    <!-- ================= PAGE CONTENT ================= -->
-     <main class="min-h-screen">
-        {% block content %}{% endblock content %}
-     </main>
-    <!-- ================= FOOTER ================= -->
-    <footer class="bg-teal-800 text-white py-4 text-center">
-        &copy; 2026 Trust Management System. All rights reserved.
-    </footer>
-
-    <!-- ================= TOAST NOTIFICATION ================= -->
-    {% if messages %}
-    <div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-full flex justify-center">
-        {% for message in messages %}
-        <div class="toast-message transition-opacity {% if message.tags == 'success' %} bg-green-300 {% elif message.tags == 'error' %} bg-red-300 {% endif %}text-white p-3 rounded-lg shadow-md min-w-56 text-center mb-3">
-            {{ message }}
-            {% comment %} <p class='bg-red-600 text-black'> {{ message.tags }} </p> {% endcomment %}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% block script %}{% endblock script %}
-    <!-- ================= MOBILE MENU TOGGLE SCRIPT ================= -->
-    <script>
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    </script>
-    <!-- ================= TOAST DISMISSAL SCRIPT ================= -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                const toastMessages = document.querySelectorAll('.toast-message');
-                toastMessages.forEach(toast => {
-                    toast.classList.add('opacity-0');
-                    setTimeout(() => toast.remove(), 300); // Remove after fade-out
-                });
-            }, 3000); // 3 seconds timeout for the toast to disappear
-        });
-    </script>
-
-</body>
+    </body>
 
 </html>
