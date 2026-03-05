@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 import os
 
-from request_app.models import Request
+from request_app.models import Request,RequestStatus
 
 from a_core.utils.storage import OverwriteStorage
 
@@ -141,6 +141,10 @@ class Campaign(models.Model):
     @property
     def status(self):
         return self.request.status
+
+    @property
+    def is_active(self):
+        return self.start_date<=timezone.now() and (self.end_date is None or timezone.now()<=self.end_date) and self.status==RequestStatus.APPROVED
     
     @property
     def get_slug(self):

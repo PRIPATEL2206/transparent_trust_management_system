@@ -24,6 +24,7 @@ urlpatterns = [
     path("account/",include("account.urls"),name="account"),
     path("campaign/",include("campaign.urls"),name="campaign"),
     path("donation/",include("donation_app.urls"),name="donation_app"),
+    path("payment/",include("payment_app.urls"),name="payment_app"),
     path("request/",include("request_app.urls"),name="request_app"),
     path("",include("home.urls"),name="home")
 ]

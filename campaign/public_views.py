@@ -25,7 +25,6 @@ class CampaignListView(ListView):
             visibility="PUBLIC",                     # or Visibility.PUBLIC if using enum
             start_date__lte=now
         ).filter(Q(end_date__isnull=True) | Q(end_date__gte=now))
-
         # Search
         q = (self.request.GET.get("q") or "").strip()
         if q:

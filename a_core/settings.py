@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'account',
     'campaign',
     'request_app',
-    'donation_app'
+    'donation_app',
+    'payment_app'
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Strip configs
+STRIPE_PUBLIC_KEY = "pk_test_51PTfbb06eYp6MVpCuv80yo1v6lOmJXBIV9WnQQ29crCC3XyeVXz4YLNGkqGyC3jkaYY0OrrP9qvtc9pdEOirkeCT00mcHRueSf"
+STRIPE_SECRET_KEY = "sk_test_51PTfbb06eYp6MVpCiN3G164lRsGMiKL8sYJottjiUrxLx7X9DO8CKJYpoArvcCKdC6vE6JRP8vmlqv5DolPEcwGX00Ep3uV1tx"

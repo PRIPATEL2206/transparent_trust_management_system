@@ -114,7 +114,8 @@
                   name="tags"
                   required
                   placeholder="health, education, women"
-                  value="{{ form.tags.value|join:', ' }}"
+                  value="{% if form.tags.value %}{{ form.tags.value|join:', ' }}{% endif %}"
+                  {% if not is_edit %} {{ form.tags.value|join:', ' }}{% endif %}"
                   {% if not is_edit %}disabled{% endif %}
                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-teal-500" />
           {% if form.tags.errors %}<p class="text-red-500 text-sm mt-1">{{ form.tags.errors|striptags }}</p>{% endif %}
@@ -266,7 +267,7 @@
             <button type="submit"
               class="bg-teal-600 text-white px-10 py-3 rounded-lg hover:bg-teal-700 transition font-medium">
               {% if form.instance.id %}
-              Update okok
+              Update
               {% else %}
               Submit
               {% endif %}

@@ -3,8 +3,11 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
-from campaign.models import Campaign
+from campaign.models import Campaign,Visibility
 from request_app import models as request_models
+from payment_app import models as payment_models
+
+
 # Create your models here.
 class Currency(models.TextChoices):
     INR = "INR", "INR"
@@ -25,7 +28,7 @@ class Donation(models.Model):
     dispaly_name = models.CharField(max_length=100, blank=True)
     donor_display_name = models.CharField(max_length=100, blank=True)
     description = models.CharField(max_length=100, blank=True)
-
+    payment=models.ForeignKey(payment_models.Payment,on_delete=models.PROTECT,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -51,7 +54,7 @@ class Donation(models.Model):
                 raise ValueError(f"Donation must be at most {max_amt}.")
 
             # only allow donations to ACTIVE + PUBLIC campaigns
-            if not (self.campaign.status() == request_models.RequestStatus.ACTIVE and self.campaign.visibility == Visibility.PUBLIC):
+            if not (self.campaign.visibility == Visibility.PUBLIC and self.campaign.is_active):
                 raise ValueError("Donations are allowed only for ACTIVE and PUBLIC campaigns.")
 
 
