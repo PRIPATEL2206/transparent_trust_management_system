@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t=@j3za4^1@12i@h0il-uw+(zip6-)y3w@)98$vw8u0k5xtsn-'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -142,5 +145,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Strip configs
-STRIPE_PUBLIC_KEY = "pk_test_51PTfbb06eYp6MVpCuv80yo1v6lOmJXBIV9WnQQ29crCC3XyeVXz4YLNGkqGyC3jkaYY0OrrP9qvtc9pdEOirkeCT00mcHRueSf"
-STRIPE_SECRET_KEY = "sk_test_51PTfbb06eYp6MVpCiN3G164lRsGMiKL8sYJottjiUrxLx7X9DO8CKJYpoArvcCKdC6vE6JRP8vmlqv5DolPEcwGX00Ep3uV1tx"
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
