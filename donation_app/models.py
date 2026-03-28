@@ -12,7 +12,6 @@ from payment_app import models as payment_models
 class Currency(models.TextChoices):
     INR = "INR", "INR"
     USD = "USD", "USD"
-    EUR = "EUR", "EUR"
 
 class Donation(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.PROTECT, related_name="donations")

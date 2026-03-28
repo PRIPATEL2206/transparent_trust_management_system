@@ -1,6 +1,6 @@
 # views.py
 from decimal import Decimal
-from django.db.models import Q, Sum, Count, F
+from django.db.models import Q, Sum, Count, F, Max, Avg
 from django.db.models.functions import Coalesce
 from django.db.models.expressions import OrderBy
 from django.utils import timezone
@@ -92,6 +92,8 @@ class CampaignDetailView(DetailView):
             .prefetch_related("gallery")
             .annotate(
                 _amount_raised=Coalesce(Sum("donations__amount"), Decimal("0.00")),
+                _max_amount=Coalesce(Max("donations__amount"), Decimal("0.00")),
+                _avg_amount=Coalesce(Avg("donations__amount"), Decimal("0.00")),
                 _donations_count=Coalesce(Count("donations", distinct=True), 0),
             )
             .filter(

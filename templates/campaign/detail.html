@@ -45,7 +45,9 @@
           {% else %}
             <div class="text-sm">Raised: {{ campaign.amount_raised }}</div>
           {% endif %}
-          <div class="text-xs text-gray-500 mt-1">Donors: {{ campaign.donations_count }}</div>
+          <div class="text-xs text-gray-500 mt-1"><a href="{% url 'donation_app:donation_list' %}?campaign={{ campaign.id }}"> Donors: {{ campaign.donations_count }}</a></div>
+          <div class="text-xs text-gray-500 mt-1">Max Donation: {{ campaign.max_donate_amount }}</div>
+          <div class="text-xs text-gray-500 mt-1">Avg Donation: {{ campaign.avg_donate_amount }}</div>
           <div class="text-xs text-gray-500 mt-1">
             Start: {{ campaign.start_date|date:"M d, Y" }}
             {% if campaign.end_date %} • End: {{ campaign.end_date|date:"M d, Y" }}{% endif %}

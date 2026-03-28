@@ -74,7 +74,11 @@
           {% endwith %}
 
           <div class="flex items-center justify-between text-xs text-gray-500">
-            <span>Donors: {{ c.donations_count }}</span>
+            <span>
+              {% comment %} <a href="{% url 'donation_app:donation_list' %}?campaign={{ c.id }}">  {% endcomment %}
+                Donors: {{ c.donations_count }}
+            {% comment %} </a> {% endcomment %}
+          </span>
             <span>
               Start: {{ c.start_date|date:"M d, Y" }}
               {% if c.end_date %} • End: {{ c.end_date|date:"M d, Y" }}{% endif %}

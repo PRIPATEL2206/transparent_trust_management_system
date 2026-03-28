@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Max, Avg
 from django.utils import timezone
 from django.utils.text import slugify
 import os
@@ -168,6 +168,20 @@ class Campaign(models.Model):
         # Fallback compute
         return self.donations.aggregate(total=Sum("amount"))["total"] or Decimal("0.00")
     
+    @property
+    def max_donate_amount(self) -> int:
+        cached = getattr(self, "_max_amount", None)
+        if cached is not None:
+            return cached
+        return self.donations.aggregate(total=Avg("amount"))["total"] or Decimal("0.00")
+
+    @property
+    def avg_donate_amount(self) -> int:
+        cached = getattr(self, "_avg_amount", None)
+        if cached is not None:
+            return cached
+        return self.donations.aggregate(total=Max("amount"))["total"] or Decimal("0.00")
+
     @property
     def donations_count(self) -> int:
         cached = getattr(self, "_donations_count", None)
