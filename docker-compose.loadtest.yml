@@ -1,0 +1,36 @@
+services:
+  locust-master:
+    image: locustio/locust:2.31.3
+    volumes:
+      - ./loadtests:/mnt/locust
+      - ./locust.conf:/mnt/locust/locust.conf
+    ports:
+      - "8089:8089"
+    command: >
+      -f /mnt/locust/locustfile.py
+      --master
+      --host=http://web:8000
+    depends_on:
+      - web
+    networks:
+      - default
+
+  locust-worker:
+    image: locustio/locust:2.31.3
+    volumes:
+      - ./loadtests:/mnt/locust
+    command: >
+      -f /mnt/locust/locustfile.py
+      --worker
+      --master-host=locust-master
+    depends_on:
+      - locust-master
+    deploy:
+      replicas: 4
+    networks:
+      - default
+
+networks:
+  default:
+    name: trust-management_default
+    external: true

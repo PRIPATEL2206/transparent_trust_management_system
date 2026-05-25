@@ -1,0 +1,15 @@
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+.env
+media/
+staticfiles/
+logs/*.log
+backups/
+node_modules/
+nginx/ssl/
+.git/
+.claude/
+tests/

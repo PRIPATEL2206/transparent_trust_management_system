@@ -1,0 +1,71 @@
+{% extends "base/base.html" %}
+
+{% block title %}My Expenses{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">My Expenses</h1>
+        <a href="{% url 'expenses_create' %}" class="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700">
+            + New Expense
+        </a>
+    </div>
+
+    <div class="flex gap-2 mb-4">
+        <a href="{% url 'expenses_list' %}" class="px-3 py-1 rounded text-sm {% if not status %}bg-primary-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">All</a>
+        <a href="?status=draft" class="px-3 py-1 rounded text-sm {% if status == 'draft' %}bg-primary-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">Draft</a>
+        <a href="?status=pending" class="px-3 py-1 rounded text-sm {% if status == 'pending' %}bg-primary-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">Pending</a>
+        <a href="?status=approved" class="px-3 py-1 rounded text-sm {% if status == 'approved' %}bg-primary-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">Approved</a>
+        <a href="?status=paid" class="px-3 py-1 rounded text-sm {% if status == 'paid' %}bg-primary-600 text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %}">Paid</a>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for expense in page %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ expense.title }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 font-mono">{{ expense.amount }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ expense.category|default:"-" }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            {% if expense.status == 'draft' %}bg-gray-100 text-gray-800
+                            {% elif expense.status == 'pending' %}bg-yellow-100 text-yellow-800
+                            {% elif expense.status == 'approved' %}bg-green-100 text-green-800
+                            {% elif expense.status == 'rejected' %}bg-red-100 text-red-800
+                            {% elif expense.status == 'paid' %}bg-blue-100 text-blue-800{% endif %}">
+                            {{ expense.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ expense.created_at|date:"M d, Y" }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        {% if expense.status == 'draft' %}
+                        <form method="POST" action="{% url 'expenses_submit' expense.id %}" class="inline">
+                            {% csrf_token %}
+                            <button class="text-primary-600 hover:text-primary-900 text-xs">Submit</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No expenses yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "base/pagination.html" %}
+</div>
+{% endblock %}

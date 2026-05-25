@@ -1,0 +1,30 @@
+{% extends "base/base.html" %}
+
+{% block title %}Manage Notices{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Pending Notices</h1>
+
+    <div class="grid gap-4">
+        {% for notice in pending_notices %}
+        <div class="bg-white shadow rounded-lg p-6">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ notice.title }}</h3>
+                    <p class="text-gray-600 mt-2">{{ notice.content }}</p>
+                    <p class="text-xs text-gray-400 mt-2">By {{ notice.created_by.username }} | Priority: {{ notice.get_priority_display }}</p>
+                </div>
+                <form method="POST" action="{% url 'notices_approve' notice.id %}" class="flex gap-2">
+                    {% csrf_token %}
+                    <button name="action" value="approve" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Approve</button>
+                    <button name="action" value="reject" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Reject</button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-8 text-gray-500">No pending notices.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

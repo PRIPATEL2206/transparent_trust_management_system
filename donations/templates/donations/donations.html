@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+{% load form_tag_utils %}
+
+{% block title %}
+Donations
+{% endblock title %}
+
+{% block body %}
+<div class="w-full  py-10  min-h-screen px-2 md:px-20  gap-10">
+
+    <div class="">
+        <h3 class="text-3xl mb-5">{{ donation_type.name }}</h3>
+        <form action="" method="get" class="my-3 flex justify-end gap-2">
+            <input placeholder="Search" type="search" name="search" value="{{search}}" class="px-2 py-1 rounded bg-card-200 ">
+            <select name="sort_by" class="px-2 py-1 rounded bg-card-200 ">
+                <option {% if sort_by == "created_at" %}selected{% endif %} value="created_at">Date</option>
+                <option {% if sort_by == "amount" %}selected{% endif %} value="amount">Amount</option>
+            </select>
+            <button class="bg-button-100 hover:bg-button-200 px-3 py-1 ml-3 rounded text-white">Search</button>
+        </form>
+        <div class="max-w-[100%] overflow-x-auto">
+
+            <table class="w-full text-center bg-white mx-auto ">
+                <thead class="bg-card-200 py-10">
+                    <tr>
+                        <th class="min-w-24 p-1">Display Name</th>
+                        <th class="min-w-24 p-1">Handover By</th>
+                        <th class="min-w-24 p-1">desc</th>
+                        <th class="min-w-24 p-1">Add By</th>    
+                        <th class="min-w-24 p-1">Amount</th>
+                        <th class="min-w-24 p-1">Date</th>
+                    </tr>
+                </thead>
+                <tbody class='border-t-4 max-h-[50%]'>
+                    {% for donation in page.object_list %}
+                    <tr class="border-b-2 border-b-gray-700 ">
+                        <td class="p-2">{{donation.display_name}}</td>
+                        <td>{{donation.handover_by}}</td>
+                        <td>{{donation.desc}}</td>
+                        <td>{{donation.add_by.username}}</td>
+                        <td>{{donation.amount}}</td>
+                        <td>{{donation.created_at | date}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-2 bg-white"> total = {{total}}</div>
+        <div class="flex justify-between mt-10">
+
+            {% if page.has_previous %}
+            <a href="?page={{page.previous_page_number}}" aria-disabled="{{page.has_previous}}"
+                class="p-2 bg-slate-500 hover:bg-slate-700 rounded cursor-pointer text-white">previews</a>
+            {% else %}
+            <a aria-disabled="true" class="p-2 bg-slate-500 rounded cursor-pointer text-gray-300">previews</a>
+            {% endif %}
+            <div class="p-2 bg-slate-500 hover:bg-slate-700 rounded  text-white">{{page.number}} / {{total_pages}}</div>
+            {% if page.has_next %}
+            <a href="?page={{page.next_page_number}}"
+                class="p-2 bg-slate-500 hover:bg-slate-700 rounded cursor-pointer text-white">next</a>
+            {% else %}
+            <a aria-disabled="true" class="p-2 bg-slate-500  rounded cursor-pointer text-gray-300">next</a>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock body %}
+
+{% block script %}
+{% endblock script %}

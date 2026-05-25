@@ -1,98 +1,177 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "base/base.html" %}
+{% load role_tags %}
 
-{% block content %}
-    <!-- Hero Section -->
-    <section class="py-20 relative overflow-hidden">
+{% block title %}Home{% endblock title %}
 
-        <div id="image-slider-container" class="absolute inset-0 z-10">
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-            <div class="slide-image absolute inset-0 bg-cover bg-center opacity-100 transition-opacity duration-2000 ease-in-out"
-                style="background-image: url('{% static "images/aboutbg1.jpg" %}');">
+    {% if user.is_authenticated %}
+    {% user_role user as current_role %}
+
+    <!-- Welcome Section -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Welcome, {{ user.first_name|default:user.username }}!</h1>
+        <p class="text-gray-500 mt-1">Role: <span class="font-semibold capitalize">{{ current_role }}</span></p>
+    </div>
+
+    <!-- Admin/Super Admin Quick Stats -->
+    {% has_role user 'admin' 'super_admin' as is_admin %}
+    {% if is_admin %}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <a href="{% url 'dashboard' %}" class="bg-primary-600 text-white rounded-lg p-4 hover:bg-primary-700 transition">
+            <div class="text-sm opacity-80">Admin Dashboard</div>
+            <div class="text-xl font-bold mt-1">View Analytics</div>
+        </a>
+        <a href="{% url 'donations_admin' %}" class="bg-green-600 text-white rounded-lg p-4 hover:bg-green-700 transition">
+            <div class="text-sm opacity-80">Donations</div>
+            <div class="text-xl font-bold mt-1">{{ pending_donations|default:"0" }} Pending</div>
+        </a>
+        <a href="{% url 'expenses_admin_list' %}" class="bg-red-500 text-white rounded-lg p-4 hover:bg-red-600 transition">
+            <div class="text-sm opacity-80">Expenses</div>
+            <div class="text-xl font-bold mt-1">{{ pending_expenses|default:"0" }} Pending</div>
+        </a>
+        <a href="{% url 'approvals_list' %}" class="bg-yellow-500 text-white rounded-lg p-4 hover:bg-yellow-600 transition">
+            <div class="text-sm opacity-80">Approvals</div>
+            <div class="text-xl font-bold mt-1">{{ pending_approvals|default:"0" }} Pending</div>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions Grid - visible to all authenticated users -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+        <!-- Donations -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Donations</h3>
             </div>
-
-            <div class="slide-image absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-2000 ease-in-out"
-                style="background-image: url('{% static "images/aboutbg2.jpg" %}');">
-            </div>
-
-            <div class="slide-image absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-2000 ease-in-out"
-                style="background-image: url('{% static "images/aboutbg3.jpg" %}');">
-            </div>
+            <p class="text-sm text-gray-500 mb-4">View and contribute to active donation campaigns.</p>
+            <a href="{% url 'donations_types' %}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">View Donations &rarr;</a>
         </div>
 
-        <!-- <div class="absolute inset-0 bg-teal-500 opacity-60 z-20"></div> -->
+        <!-- Expenses -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Expenses</h3>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">Raise and track expense claims.</p>
+            <a href="{% url 'expenses_list' %}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">My Expenses &rarr;</a>
+        </div>
 
-        <div class="container mx-auto text-center px-4 relative z-30">
-            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
-                Welcome to the Trust Management System
-            </h1>
-            <p class="text-white text-lg md:text-xl mb-6">
-                Transparent, secure, and easy management of trust operations.
-            </p>
-            <a href="{% url 'register' %}"
-                class="inline-block bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition">
-                Join Trust Today
+        <!-- Payments -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Payments</h3>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">Make payments and download receipts.</p>
+            <a href="{% url 'payments_history' %}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">Payment History &rarr;</a>
+        </div>
+
+        <!-- Notices -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Notices</h3>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">View announcements and important updates.</p>
+            <a href="{% url 'notices_list' %}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">View Notices &rarr;</a>
+        </div>
+
+        <!-- Chat -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Chat</h3>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">Join group conversations.</p>
+            <a href="{% url 'chat_groups' %}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">Open Chat &rarr;</a>
+        </div>
+
+        <!-- Products -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Products</h3>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">Browse and order products.</p>
+            <a href="{% url 'products_list' %}" class="text-primary-600 hover:text-primary-800 text-sm font-medium">Browse Products &rarr;</a>
+        </div>
+    </div>
+
+    <!-- NGO Section (only for NGO role) -->
+    {% has_role user 'ngo' as is_ngo %}
+    {% if is_ngo %}
+    <div class="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-8">
+        <h2 class="text-lg font-semibold text-orange-800 mb-2">NGO Portal</h2>
+        <p class="text-sm text-orange-600 mb-4">Request funding for your initiatives.</p>
+        <a href="{% url 'ngo_requests_list' %}" class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 text-sm">
+            My Fund Requests
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Role Request Section (for regular users) -->
+    {% if current_role == 'user' %}
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">Want more access?</h2>
+        <p class="text-sm text-gray-600 mb-4">Request a role upgrade to become a Member and access more features like creating notices and expenses.</p>
+        <a href="{% url 'role_request' %}" class="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 text-sm">
+            Request Role Upgrade
+        </a>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- Public Landing -->
+    <div class="text-center py-16">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            {% if site_config %}{{ site_config.trust_name }}{% else %}Trust Management System{% endif %}
+        </h1>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            {% if site_config %}{{ site_config.trust_description|default:"A transparent platform for managing trust operations, donations, and community initiatives." }}{% else %}A transparent platform for managing trust operations, donations, and community initiatives.{% endif %}
+        </p>
+        <div class="flex justify-center gap-4">
+            <a href="{% url 'auth_login' %}" class="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">
+                Login
+            </a>
+            <a href="{% url 'auth_register' %}" class="bg-white text-primary-600 border border-primary-600 px-6 py-3 rounded-md hover:bg-primary-50 font-medium">
+                Register
             </a>
         </div>
-    </section>
-
-    <!-- About Trust Preview -->
-    <section class="py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-semibold mb-6 text-teal-700">About the Trust</h2>
-            <p class="text-gray-700 max-w-2xl mx-auto">
-                Our trust is committed to transparency, accountability, and serving the community efficiently. Explore
-                our membership plans, public donation receipts, and get involved today.
-            </p>
+        <div class="mt-8">
+            <a href="{% url 'transparency' %}" class="text-gray-500 hover:text-primary-600 text-sm">
+                View Financial Transparency &rarr;
+            </a>
         </div>
-    </section>
-{% endblock content %}
-    
-{% block script %}
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // 1. Check if the elements are found
-            const slides = document.querySelectorAll('.slide-image');
-
-            if (slides.length === 0) {
-                console.error("Image slider failed: No elements with class 'slide-image' found.");
-                return; // Stop execution if no slides are found
-            }
-
-            let currentSlide = 0;
-            const slideInterval = 3000; // 3 seconds
-
-            function nextSlide() {
-                // Hide the current slide (opacity 100 -> 0)
-                slides[currentSlide].classList.remove('opacity-100');
-                slides[currentSlide].classList.add('opacity-0');
-
-                // Move to the next slide index
-                currentSlide = (currentSlide + 1) % slides.length;
-
-                // Show the next slide (opacity 0 -> 100)
-                slides[currentSlide].classList.remove('opacity-0');
-                slides[currentSlide].classList.add('opacity-100');
-
-                // --- ADD A TEST LOG HERE ---
-                console.log("Showing slide: " + (currentSlide + 1));
-            }
-
-            // Start the continuous loop
-            setInterval(nextSlide, slideInterval);
-        });
-    </script>
-
-
-    <script>
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-    </script>
-{% endblock script %}
-
-    
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}

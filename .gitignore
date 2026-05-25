@@ -1,40 +1,74 @@
-node_modules/
-.venv
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
-
-# Virtual environment
-venv/
-env/
 *.egg-info/
+dist/
+build/
 
-# Django stuff
-*.log
-*.pot
-*.pyc
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Database
 db.sqlite3
+*.sqlite3
+
+# Media uploads
 media/
+
+# Static files (collected)
 staticfiles/
 
-# If using Django migrations
-*/migrations/__pycache__/
-*/migrations/*.pyc
+# Logs
+logs/*.log
+logs/*.log.*
 
-# OS files
+# Backups
+backups/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# Node (if using for Tailwind build)
+node_modules/
+
+# SSL certificates (never commit)
+nginx/ssl/*.pem
+nginx/ssl/*.key
+nginx/ssl/*.crt
+
+# Certbot
+certbot/
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# Load test results
+loadtests/results/
+*.csv
 
 # Coverage reports
 htmlcov/
 .coverage
-.coverage.*
-.cache
-nosetests.xml
 coverage.xml
-*.cover
-*.log
 
-# Environment variables
-.env
+# Claude Code (IDE agent state)
+.claude/

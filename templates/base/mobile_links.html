@@ -1,0 +1,57 @@
+{% load role_tags %}
+{% if user.is_authenticated %}
+{% has_role user 'admin' 'super_admin' as is_admin %}
+
+<a href="/" class="block rounded-md hover:bg-primary-700 text-white px-3 py-2 text-base font-medium {% if request.resolver_match.url_name == 'home' %} bg-primary-900 {% endif %}"
+aria-current="page">Home</a>
+
+{% if is_admin %}
+<a href="{% url 'dashboard' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'dashboard' %} bg-primary-900 {% endif %}">Dashboard</a>
+{% endif %}
+
+<a href="{% url 'donations_types' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'donations_types' %} bg-primary-900 {% endif %}">Donations</a>
+
+<a href="{% url 'notices_list' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'notices_list' %} bg-primary-900 {% endif %}">Notices</a>
+
+<a href="{% url 'expenses_list' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'expenses_list' %} bg-primary-900 {% endif %}">Expenses</a>
+
+<a href="{% url 'chat_groups' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'chat_groups' %} bg-primary-900 {% endif %}">Chat</a>
+
+<a href="{% url 'products_list' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'products_list' %} bg-primary-900 {% endif %}">Products</a>
+
+<a href="{% url 'transparency' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'transparency' %} bg-primary-900 {% endif %}">Transparency</a>
+
+<a href="{% url 'payments_history' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white">Payments</a>
+
+<a href="{% url 'notifications' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white {% if request.resolver_match.url_name == 'notifications' %} bg-primary-900 {% endif %}">
+  Notifications{% if unread_notifications_count %} ({{ unread_notifications_count }}){% endif %}
+</a>
+
+{% if is_admin %}
+<div class="border-t border-primary-500 mt-2 pt-2">
+  <span class="block px-3 py-1 text-xs font-semibold text-primary-300 uppercase tracking-wider">Admin</span>
+  <a href="{% url 'approvals_list' %}" class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white">Approvals</a>
+  <a href="{% url 'reports_generate' %}" class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white">Reports</a>
+  <a href="{% url 'roles_list' %}" class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white">Roles</a>
+  <a href="{% url 'ngo_requests_admin' %}" class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white">NGO Requests</a>
+  <a href="{% url 'members_directory' %}" class="block rounded-md px-3 py-2 text-base font-medium hover:bg-primary-700 text-white">Members</a>
+</div>
+{% endif %}
+
+{% else %}
+<a href="{% url 'auth_login' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-700 {% if request.resolver_match.url_name == 'auth_login' %} bg-primary-900 {% endif %}">Login</a>
+<a href="{% url 'auth_register' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-700 {% if request.resolver_match.url_name == 'auth_register' %} bg-primary-900 {% endif %}">Register</a>
+<a href="{% url 'transparency' %}"
+  class="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-700">Transparency</a>
+{% endif %}

@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
+
+.massage-popup{
+    animation-name: popup;
+    animation-iteration-count: 1;
+    animation-duration: 3s;
+    opacity: 0;
+    }
+@keyframes popup {
+    0% {
+        opacity: 1;
+    }
+    80%{
+        opacity: 1;
+    }
+    100% {
+        display: none;
+        opacity: 0;
+    }
+  }
+
+.dropdown-container:hover .dropdown-body{
+    @apply block scale-100 opacity-100
+}
+
 @tailwind utilities;

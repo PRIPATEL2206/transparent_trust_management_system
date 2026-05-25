@@ -1,0 +1,39 @@
+{% extends "base/base.html" %}
+
+{% block title %}Backup Codes{% endblock title %}
+
+{% block body %}
+<div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <div class="text-center mb-4">
+        <svg class="mx-auto h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <h2 class="mt-4 text-xl font-bold text-gray-800">Two-Factor Authentication Enabled</h2>
+    </div>
+
+    <div class="bg-red-50 border border-red-200 rounded p-4 mb-6">
+        <p class="text-sm text-red-800 font-medium">
+            Save these backup codes in a secure place. Each code can only be used once.
+            If you lose access to your authenticator, these are your only way to recover your account.
+        </p>
+    </div>
+
+    <div class="bg-gray-50 border rounded p-4 mb-6">
+        <div class="grid grid-cols-2 gap-2">
+            {% for code in backup_codes %}
+            <code class="font-mono text-lg text-gray-800 bg-white border rounded p-2 text-center">{{ code }}</code>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p class="text-sm text-gray-600 mb-4 text-center">
+        You have <strong>{{ backup_codes|length }}</strong> backup codes. Store them securely.
+    </p>
+
+    <div class="text-center">
+        <a href="{% url 'auth_settings' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg inline-block transition">
+            Done
+        </a>
+    </div>
+</div>
+{% endblock body %}

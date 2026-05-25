@@ -1,0 +1,35 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+{% load form_tag_utils %}
+
+{% block title %} 
+    Donations
+{% endblock title %}
+
+{% block body %}
+    <div class="w-full py-10 min-h-screen px-20 grid grid-cols-3  gap-10">
+            {% for donation in donation_types %}
+              <div class="w-full shadow-xl overflow-hidden rounded-md bg-card-200  " >
+                <div class="flex px-2 py-1 justify-between">
+                    <p>{{donation.name}}</p>
+                    <p class="text-xs">{{donation.starting_date | date}}</p>
+                </div>
+                <img class="w-full" src="{{donation.photo.url}}" alt="">
+                <p class="float-end mr-2 text-gray-500 text-sm">ends on {{donation.ending_date | date }}</p>
+                <div class="px-2 mt-5 mb-3">
+                    <p>{{donation.desc}}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-5 mx-5 mb-5">
+                    <a class="cursor-pointer rounded-lg bg-button-100 px-5 py-2 text-white hover:bg-button-200 text-center" href="{% url 'donations' donation.id %}">See Donations</a>
+                    <a class="cursor-pointer rounded-lg bg-button-100 px-5 py-2 text-white hover:bg-button-200 text-center" href="{% url 'add_donation' %}?type={{donation.id}}">Donate</a>
+                </div>
+              </div>
+            {% endfor %}
+    </div>
+
+
+{% endblock body %}
+
+{% block script %}
+{% endblock script %}
