@@ -1,0 +1,64 @@
+{% extends "base/base.html" %}
+
+{% block title %}Manage Donations{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Donation Management</h1>
+        <a href="{% url 'donations_export' %}"
+           class="inline-flex items-center gap-1 bg-gray-700 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Export CSV
+        </a>
+    </div>
+
+    <div class="mb-4 flex gap-2">
+        <a href="?status=pending" class="px-3 py-1 rounded-md text-sm {% if status == 'pending' %}bg-yellow-500 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">Pending Approval</a>
+        <a href="?status=approved" class="px-3 py-1 rounded-md text-sm {% if status == 'approved' %}bg-green-500 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">Approved</a>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Display Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Added By</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    {% if status == 'pending' %}
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for donation in page %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ donation.display_name }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ donation.add_by.username }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ donation.donation_for.name }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 font-mono">&#8377; {{ donation.amount }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ donation.created_at|date:"M d, Y" }}</td>
+                    {% if status == 'pending' %}
+                    <td class="px-6 py-4 text-sm">
+                        <form method="POST" action="{% url 'donations_action' donation.id %}" class="inline-flex gap-2">
+                            {% csrf_token %}
+                            <button name="action" value="approve" class="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">Approve</button>
+                            <button name="action" value="reject" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Reject</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No donations found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "base/pagination.html" %}
+</div>
+{% endblock %}

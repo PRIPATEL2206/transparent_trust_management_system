@@ -1,0 +1,97 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "panels": [
+    {
+      "title": "Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[5m])",
+          "legendFormat": "{{method}} {{status}} {{path}}"
+        }
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {
+          "expr": "rate(http_errors_total[5m])",
+          "legendFormat": "{{status}}"
+        }
+      ]
+    },
+    {
+      "title": "Active Requests",
+      "type": "gauge",
+      "gridPos": {"h": 8, "w": 6, "x": 0, "y": 8},
+      "targets": [
+        {
+          "expr": "http_requests_active"
+        }
+      ]
+    },
+    {
+      "title": "Avg Response Time (ms)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 18, "x": 6, "y": 8},
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) * 1000",
+          "legendFormat": "{{method}} {{path}}"
+        }
+      ]
+    },
+    {
+      "title": "Business Metrics",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 16},
+      "targets": [
+        {
+          "expr": "app_business_total",
+          "legendFormat": "{{metric}}"
+        }
+      ]
+    },
+    {
+      "title": "Login Success vs Failure",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 22},
+      "targets": [
+        {
+          "expr": "rate(app_business_total{metric=\"logins_success\"}[5m])",
+          "legendFormat": "Success"
+        },
+        {
+          "expr": "rate(app_business_total{metric=\"logins_failure\"}[5m])",
+          "legendFormat": "Failure"
+        }
+      ]
+    },
+    {
+      "title": "Application Gauges",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 22},
+      "targets": [
+        {
+          "expr": "app_business_gauge",
+          "legendFormat": "{{metric}}"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "tags": ["trust-management", "django"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "title": "Trust Management System",
+  "uid": "trust-mgmt-overview"
+}

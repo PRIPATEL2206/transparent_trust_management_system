@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+
+{% block title %}Verify Email{% endblock title %}
+
+{% block body %}
+<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <div class="text-center mb-6">
+        <svg class="mx-auto h-12 w-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <h2 class="mt-4 text-xl font-bold text-gray-800">Email Verification Required</h2>
+    </div>
+
+    <p class="text-gray-600 text-center mb-6">
+        We sent a verification email to <strong>{{ request.user.email }}</strong>.
+        Please check your inbox and click the verification link.
+    </p>
+
+    <div class="bg-blue-50 border border-blue-200 rounded p-4 mb-6">
+        <p class="text-sm text-blue-800">
+            <strong>Didn't receive the email?</strong> Check your spam folder, or click below to resend.
+        </p>
+    </div>
+
+    <form method="post" class="text-center">
+        {% csrf_token %}
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-150">
+            Resend Verification Email
+        </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-500 mt-4">
+        <a href="{% url 'home' %}" class="text-blue-600 hover:underline">Continue to homepage</a>
+    </p>
+</div>
+{% endblock body %}

@@ -1,0 +1,95 @@
+{% extends "base/base.html" %}
+
+{% block title %}Members Directory{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Members Directory</h1>
+        <span class="text-sm text-gray-500">{{ page.paginator.count }} total members</span>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="bg-white shadow rounded-lg p-4 mb-6">
+        <form method="GET" class="flex flex-col sm:flex-row gap-3">
+            <input type="text" name="q" value="{{ search }}" placeholder="Search by name, username, or email..."
+                   class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm px-3 py-2 border">
+            <select name="role" class="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm px-3 py-2 border">
+                <option value="">All Roles</option>
+                {% for value, label in role_choices %}
+                <option value="{{ value }}" {% if role_filter == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-md text-sm hover:bg-primary-700">Search</button>
+            {% if search or role_filter %}
+            <a href="{% url 'members_directory' %}" class="text-gray-600 px-4 py-2 rounded-md text-sm hover:bg-gray-100 border border-gray-300">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Members Table -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Login</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for member in page %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <img class="h-8 w-8 rounded-full" src="{{ member.user.profile.get_avatar_url }}" alt="">
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">{{ member.user.get_full_name|default:member.user.username }}</div>
+                                <div class="text-xs text-gray-500">@{{ member.user.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ member.user.email|default:"-" }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                            {% if member.role == 'super_admin' %}bg-red-100 text-red-800
+                            {% elif member.role == 'admin' %}bg-purple-100 text-purple-800
+                            {% elif member.role == 'member' %}bg-green-100 text-green-800
+                            {% elif member.role == 'ngo' %}bg-blue-100 text-blue-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ member.get_role_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ member.user.date_joined|date:"M d, Y" }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ member.user.last_login|date:"M d, Y"|default:"Never" }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <div class="flex items-center gap-2">
+                            <a href="{% url 'roles_assign' member.user.id %}" class="text-primary-600 hover:text-primary-800">Edit Role</a>
+                            {% if not member.user.is_superuser %}
+                            <form method="POST" action="{% url 'toggle_user_active' member.user.id %}" class="inline">
+                                {% csrf_token %}
+                                {% if member.user.is_active %}
+                                <button type="submit" class="text-red-500 hover:text-red-700 text-xs" onclick="return confirm('Deactivate {{ member.user.username }}?')">Deactivate</button>
+                                {% else %}
+                                <button type="submit" class="text-green-500 hover:text-green-700 text-xs">Activate</button>
+                                {% endif %}
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No members found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% include "base/pagination.html" %}
+</div>
+{% endblock %}

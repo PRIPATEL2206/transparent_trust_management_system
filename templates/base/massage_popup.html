@@ -1,0 +1,50 @@
+{% load static %}
+
+<div class="lg:max-w-[30%] absolute top-16 right-2 text-white font-bold " id="popUpBox">  
+</div>
+
+<script nonce="{{ csp_nonce }}">
+    let messages = []
+    {% for message in messages %}
+        messages.push({
+            msg:'{{ message }}',
+            tag:'{{ message.tags }}'
+        })
+    {% endfor %}
+
+    const popup = {
+        success: (msg) => {
+            popup.show(msg, "success");
+        },
+        error: (msg) => {
+            popup.show(msg, "error");
+        },
+        show: (data, type) => {
+
+            //  making massges like this
+            // <div class="massage-popup bg-red-400 p-3 mb-3 rounded-lg">
+            //     {{ massage }}
+            // </div>
+
+            // <div class="massage-popup bg-green-400 p-3 mb-3 rounded-lg">
+            //     {{ massage }}
+            // </div>
+
+            let masssge = document.createElement("div");
+            masssge.classList.add("massage-popup", type == "error" ? "bg-red-400" : "bg-green-400", "p-3", "mb-3", "rounded-lg")
+            masssge.textContent = data;
+            let popupBox = document.getElementById("popUpBox") 
+            popupBox.appendChild(masssge)
+            
+            setInterval(()=>{
+                masssge.remove()
+            },3000)
+
+        }
+
+    }
+
+    messages.forEach(({msg,tag})=>{
+        popup.show(msg,tag)
+    })
+</script>

@@ -1,0 +1,46 @@
+{% extends "base/base.html" %}
+
+{% block title %}Set Up Two-Factor Authentication{% endblock title %}
+
+{% block body %}
+<div class="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Set Up Two-Factor Authentication</h2>
+
+    <p class="text-gray-600 mb-4">
+        Scan the QR code below with your authenticator app (Google Authenticator, Authy, or similar).
+    </p>
+
+    <div class="text-center mb-6">
+        {% if qr_data_url %}
+        <img src="{{ qr_data_url }}" alt="QR Code" class="mx-auto border rounded p-2">
+        {% else %}
+        <p class="text-sm text-gray-500 bg-gray-100 p-4 rounded">
+            QR code generation unavailable. Enter the secret manually.
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="bg-gray-50 border rounded p-4 mb-6">
+        <p class="text-sm text-gray-600 mb-1">Manual entry key:</p>
+        <code class="text-lg font-mono font-bold text-gray-800 break-all">{{ secret }}</code>
+    </div>
+
+    <form method="post" action="{% url 'auth_2fa_confirm' %}">
+        {% csrf_token %}
+        <label for="code" class="block text-sm font-medium text-gray-700 mb-2">
+            Enter the 6-digit code from your authenticator:
+        </label>
+        <input type="text" name="code" id="code" maxlength="6" pattern="[0-9]{6}"
+               inputmode="numeric" autocomplete="one-time-code"
+               class="w-full p-3 border rounded-lg text-center text-2xl tracking-widest font-mono"
+               placeholder="000000" required>
+        <button type="submit" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition">
+            Verify & Enable 2FA
+        </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-500 mt-4">
+        <a href="{% url 'auth_settings' %}" class="text-blue-600 hover:underline">Cancel</a>
+    </p>
+</div>
+{% endblock body %}

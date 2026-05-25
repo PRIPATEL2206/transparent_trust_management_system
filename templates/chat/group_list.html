@@ -1,0 +1,36 @@
+{% extends "base/base.html" %}
+
+{% block title %}Chat Groups{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Chat Groups</h1>
+        {% load role_tags %}
+        {% has_role user 'admin' 'super_admin' as is_admin %}
+        {% if is_admin %}
+        <a href="{% url 'chat_create_group' %}" class="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700">
+            + Create Group
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="grid gap-4">
+        {% for group in groups %}
+        <a href="{% url 'chat_room' group.id %}" class="block bg-white shadow rounded-lg p-4 hover:shadow-md transition">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">{{ group.name }}</h3>
+                    <p class="text-sm text-gray-500 mt-1">{{ group.description|truncatewords:20 }}</p>
+                </div>
+                <div class="text-xs text-gray-400">
+                    {{ group.members.count }} members
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="text-center py-8 text-gray-500">You're not part of any chat groups yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

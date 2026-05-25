@@ -1,0 +1,95 @@
+{% extends "base/base.html" %}
+
+{% block title %}Site Configuration{% endblock %}
+
+{% block body %}
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Site Configuration</h1>
+        <a href="{% url 'dashboard' %}" class="text-sm text-gray-500 hover:text-gray-700">&larr; Back to Dashboard</a>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% include "base/form_errors.html" %}
+
+        <!-- Trust Info -->
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Trust Information</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Trust Name</label>
+                    {{ form.trust_name }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    {{ form.trust_description }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Fees -->
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Fees & Limits</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Membership Fee</label>
+                    {{ form.membership_fee }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">User Join Fee</label>
+                    {{ form.user_join_fee }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Min Donation Amount</label>
+                    {{ form.min_donation_amount }}
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO -->
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">SEO / Meta Tags</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Meta Title</label>
+                    {{ form.meta_title }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+                    {{ form.meta_description }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Meta Keywords</label>
+                    {{ form.meta_keywords }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    {{ form.contact_email }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    {{ form.contact_phone }}
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                    {{ form.address }}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="bg-primary-600 text-white px-6 py-2 rounded-md hover:bg-primary-700 font-medium">
+                Save Configuration
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "base/base.html" %}
+
+{% block title %}Pending Role Approvals{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Pending Role Approvals</h1>
+        <a href="{% url 'roles_list' %}" class="text-primary-600 hover:text-primary-800">&larr; Back to Roles</a>
+    </div>
+
+    <!-- Direct Role Assignments Pending Approval -->
+    <div class="bg-white shadow overflow-hidden rounded-lg mb-8">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-700">Direct Role Assignments</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requested Role</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for role in pending_roles %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ role.user.username }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ role.get_role_display }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ role.created_at|date:"M d, Y" }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <form method="POST" action="{% url 'roles_approve' role.id %}" class="inline-flex gap-2">
+                            {% csrf_token %}
+                            <button name="action" value="approve" class="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">Approve</button>
+                            <button name="action" value="reject" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">No pending direct assignments.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- User Role Upgrade Requests -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-700">Role Upgrade Requests</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requested Role</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reason</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for req in pending_requests %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ req.user.username }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ req.get_requested_role_display }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ req.reason }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ req.created_at|date:"M d, Y" }}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <form method="POST" action="{% url 'role_request_action' req.id %}" class="inline-flex gap-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="notes" value="">
+                            <button name="action" value="approve" class="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600">Approve</button>
+                            <button name="action" value="reject" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">No pending role upgrade requests.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

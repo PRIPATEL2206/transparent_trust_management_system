@@ -9,6 +9,7 @@
     pkgs.python311 # Python 3.11 interpreter
     pkgs.python311Packages.pip
     pkgs.openssh
+    pkgs.gnumake
   ];
   # Sets environment variables in the workspace
   env = { };

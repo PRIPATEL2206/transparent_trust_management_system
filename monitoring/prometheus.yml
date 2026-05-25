@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'trust-management'
+    metrics_path: '/metrics/'
+    scheme: 'http'
+    static_configs:
+      - targets: ['web:8000']
+        labels:
+          app: 'trust-management'
+          environment: 'production'
+
+  - job_name: 'nginx'
+    metrics_path: '/stub_status'
+    static_configs:
+      - targets: ['nginx:80']

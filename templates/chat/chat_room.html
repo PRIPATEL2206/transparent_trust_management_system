@@ -1,0 +1,123 @@
+{% extends "base/base.html" %}
+
+{% block title %}{{ group.name }}{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto px-4 py-4 h-[calc(100vh-8rem)] flex flex-col">
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h1 class="text-xl font-bold text-gray-900">{{ group.name }}</h1>
+            <p class="text-xs text-gray-500">{{ group.members.count }} members</p>
+        </div>
+        <a href="{% url 'chat_groups' %}" class="text-primary-600 hover:text-primary-800 text-sm">&larr; Back</a>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-3">
+        {% for msg in messages_list %}
+        <div class="{% if msg.sender == user %}text-right{% endif %}">
+            <div class="inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-lg
+                {% if msg.sender == user %}bg-primary-600 text-white{% else %}bg-white shadow text-gray-900{% endif %}">
+                {% if msg.sender != user %}
+                <div class="text-xs font-semibold {% if msg.sender != user %}text-primary-600{% endif %} mb-1">{{ msg.sender.username }}</div>
+                {% endif %}
+                <p class="text-sm">{{ msg.content }}</p>
+                <div class="text-xs mt-1 {% if msg.sender == user %}text-primary-200{% else %}text-gray-400{% endif %}">
+                    {{ msg.created_at|date:"H:i" }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center text-gray-400 py-8">No messages yet. Start the conversation!</div>
+        {% endfor %}
+    </div>
+
+    <!-- Message Input -->
+    <div class="mt-4">
+        <form id="chat-form" method="POST" class="flex gap-2">
+            {% csrf_token %}
+            <input type="text" id="chat-input" name="message" placeholder="Type a message..." maxlength="2000"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                autocomplete="off">
+            <button type="submit" class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+                Send
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script nonce="{{ csp_nonce }}">
+    const groupId = '{{ group.id }}';
+    const currentUser = '{{ user.username }}';
+    const messagesContainer = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    // WebSocket connection with auto-reconnect
+    let ws;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+
+    function connectWebSocket() {
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws/chat/${groupId}/`);
+
+        ws.onopen = function() {
+            reconnectAttempts = 0;
+        };
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            addMessage(data.sender, data.message, data.timestamp);
+        };
+
+        ws.onclose = function() {
+            if (reconnectAttempts < maxReconnectAttempts) {
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                reconnectAttempts++;
+                setTimeout(connectWebSocket, delay);
+            }
+        };
+    }
+
+    connectWebSocket();
+
+    chatForm.addEventListener('submit', function(e) {
+        const message = chatInput.value.trim();
+        if (message && ws && ws.readyState === WebSocket.OPEN) {
+            e.preventDefault();
+            ws.send(JSON.stringify({ message: message }));
+            chatInput.value = '';
+        }
+    });
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function addMessage(sender, content, timestamp) {
+        const isOwn = sender === currentUser;
+        const safeSender = escapeHtml(sender);
+        const safeContent = escapeHtml(content);
+        const time = new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const html = `
+            <div class="${isOwn ? 'text-right' : ''}">
+                <div class="inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${isOwn ? 'bg-primary-600 text-white' : 'bg-white shadow text-gray-900'}">
+                    ${!isOwn ? `<div class="text-xs font-semibold text-primary-600 mb-1">${safeSender}</div>` : ''}
+                    <p class="text-sm">${safeContent}</p>
+                    <div class="text-xs mt-1 ${isOwn ? 'text-primary-200' : 'text-gray-400'}">${time}</div>
+                </div>
+            </div>
+        `;
+        messagesContainer.insertAdjacentHTML('beforeend', html);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+</script>
+{% endblock %}

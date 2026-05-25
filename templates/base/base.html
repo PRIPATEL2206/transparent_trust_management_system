@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if site_config %}
+    <meta name="description" content="{{ site_config.meta_description }}">
+    <meta name="keywords" content="{{ site_config.meta_keywords }}">
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}Home{% endblock title %} | {% if site_config %}{{ site_config.trust_name }}{% else %}Trust Management{% endif %}</title>
+</head>
+
+<body>
+
+    {% include "base/massage_popup.html" %}
+    {% include "base/navbar.html" %}
+    {% if show_verification_banner %}
+    <div class="bg-yellow-50 border-b border-yellow-200 px-4 py-2 text-center text-sm text-yellow-800">
+        <span>Your email is not verified.</span>
+        <a href="{% url 'auth_resend_verification' %}" class="font-medium underline hover:text-yellow-900">Verify now</a>
+    </div>
+    {% endif %}
+    {% block body %}{% endblock body %}
+
+    {% include "base/footer.html" %}
+
+    <script nonce="{{ csp_nonce }}" src="{% static 'js/script.js' %}"></script>
+    {% block script %}{% endblock script %}
+
+</body>
+
+
+</html>
